@@ -96,13 +96,29 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="黄少杰">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="这一题是leetcode160题。关于链表的一道easy题。  今天之所以会写下关于这题的文章， 因为要做好这题还是有两个窍门。  所以我觉得这题并不easy 题目描述编写一个程序，找到两个单链表相交的起始节点。 如下面的两个链表：  在节点 c1 开始相交。 示例 1：  123输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8">
+<meta name="keywords" content="算法,LeetCode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="leetcode160题">
+<meta property="og:url" content="http://yoursite.com/2019/04/27/leetcode160/index.html">
 <meta property="og:site_name" content="黄少杰">
+<meta property="og:description" content="这一题是leetcode160题。关于链表的一道easy题。  今天之所以会写下关于这题的文章， 因为要做好这题还是有两个窍门。  所以我觉得这题并不easy 题目描述编写一个程序，找到两个单链表相交的起始节点。 如下面的两个链表：  在节点 c1 开始相交。 示例 1：  123输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/statement.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/160_example_1.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/160_example_2.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/160_example_3.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/example1.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/example2.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/example3.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/example4.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/example5.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/27/leetcode160/example6.jpg">
+<meta property="og:updated_time" content="2019-04-27T15:46:39.496Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="黄少杰">
+<meta name="twitter:title" content="leetcode160题">
+<meta name="twitter:description" content="这一题是leetcode160题。关于链表的一道easy题。  今天之所以会写下关于这题的文章， 因为要做好这题还是有两个窍门。  所以我觉得这题并不easy 题目描述编写一个程序，找到两个单链表相交的起始节点。 如下面的两个链表：  在节点 c1 开始相交。 示例 1：  123输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/27/leetcode160/statement.png">
 
 
 
@@ -110,7 +126,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/">
+  <link rel="canonical" href="http://yoursite.com/2019/04/27/leetcode160/">
 
 
 
@@ -120,7 +136,7 @@
   };
 </script>
 
-  <title>黄少杰</title>
+  <title>leetcode160题 | 黄少杰</title>
   
 
 
@@ -168,8 +184,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -211,7 +226,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
 
     
     
@@ -324,9 +339,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -358,10 +373,8 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/04/27/leetcode160/" class="post-title-link" itemprop="url">leetcode160题</a>
+          <h1 class="post-title" itemprop="name headline">leetcode160题
+
               
             
           </h1>
@@ -443,9 +456,7 @@
       
 
       
-        
-          
-            <p> 这一题是leetcode160题。关于链表的一道easy题。</p>
+        <p> 这一题是leetcode160题。关于链表的一道easy题。</p>
 <p> 今天之所以会写下关于这题的文章， 因为要做好这题还是有两个窍门。</p>
 <p> 所以我觉得这题并不easy</p>
 <h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>编写一个程序，找到两个单链表相交的起始节点。</p>
@@ -499,8 +510,6 @@
 <h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>这里用我比较熟悉的golang编写，48ms</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * type ListNode struct &#123;</span></span><br><span class="line"><span class="comment"> *     Val int</span></span><br><span class="line"><span class="comment"> *     Next *ListNode</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntersectionNode</span><span class="params">(headA, headB *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> headA == <span class="literal">nil</span> || headB == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> p, q *ListNode</span><br><span class="line">    <span class="comment">// 找出尾巴节点</span></span><br><span class="line">    p = headA</span><br><span class="line">    <span class="keyword">for</span> p.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        p = p.Next</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 尾巴节点和另一个头部节点相连</span></span><br><span class="line">    <span class="comment">// 1. 如果形成环则是有相交点，找出相交点</span></span><br><span class="line">    <span class="comment">// 2. 反之则无相交节点</span></span><br><span class="line">    p.Next = headB</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(end *ListNode)</span></span>&#123;</span><br><span class="line">       end.Next = <span class="literal">nil</span> </span><br><span class="line">    &#125;(p)</span><br><span class="line">    p, q = headA, headA</span><br><span class="line">    <span class="comment">// q前进一步, p一次前进两步</span></span><br><span class="line">    <span class="comment">// 任一个为空代表链表没有成环</span></span><br><span class="line">    <span class="keyword">for</span> p != <span class="literal">nil</span> &amp;&amp; p.Next != <span class="literal">nil</span> &#123;</span><br><span class="line">        p = p.Next.Next</span><br><span class="line">        q = q.Next</span><br><span class="line">        <span class="keyword">if</span> p == q &#123;</span><br><span class="line">            <span class="comment">// 寻找相交节点</span></span><br><span class="line">            p = headA</span><br><span class="line">            <span class="keyword">for</span> p != q &#123;</span><br><span class="line">                q = q.Next</span><br><span class="line">                p = p.Next</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> q</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-          
-        
       
     </div>
 
@@ -521,192 +530,38 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/27/first/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="黄少杰">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="黄少杰">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/04/27/first/" class="post-title-link" itemprop="url">My first post</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-27 08:51:32 / 修改时间：13:56:54" itemprop="dateCreated datePublished" datetime="2019-04-27T08:51:32+08:00">2019-04-27</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/随记/" itemprop="url" rel="index"><span itemprop="name">随记</span></a></span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/算法/" rel="tag"># 算法</a>
           
-
+            <a href="/tags/LeetCode/" rel="tag"># LeetCode</a>
           
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>欢迎来到我的<a href="https://socketsj.github.io/" target="_blank" rel="noopener">blog</a>! </p>
-<p>这是我第一篇发布文章, 希望再此记录自己成长点点滴滴。</p>
-<p>不定时记录自己近来学习心得，以及学习文章。</p>
-<h2 id="关于我"><a href="#关于我" class="headerlink" title="关于我"></a>关于我</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><blockquote>
-<p>广州互联网行业中的小码农</p>
-</blockquote>
-<h3 id="技术方向"><a href="#技术方向" class="headerlink" title="技术方向"></a>技术方向</h3><blockquote>
-<p>后端技术<br>golang<br>python</p>
-</blockquote>
-<h3 id="兴趣"><a href="#兴趣" class="headerlink" title="兴趣"></a>兴趣</h3><blockquote>
-<p>音乐(周杰伦的歌和孙燕姿的歌特别喜欢)<br>运动(最近一直锻炼，执行消灭小肚腩计划中)<br>游戏(英雄联盟、DNF都玩。段位最高去到铂金有点菜)</p>
-</blockquote>
-<h3 id="我的社区"><a href="#我的社区" class="headerlink" title="我的社区"></a>我的社区</h3><blockquote>
-<p>Github:<a href="https://github.com/Socketsj" target="_blank" rel="noopener">https://github.com/Socketsj</a></p>
-</blockquote>
-<h3 id="联系我"><a href="#联系我" class="headerlink" title="联系我"></a>联系我</h3><blockquote>
-<p>Email: <a href="mailto:282048277@qq.com" target="_blank" rel="noopener">282048277@qq.com</a></p>
-</blockquote>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
       
 
       
       
-        <div class="post-eof"></div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/27/first/" rel="next" title="My first post">
+                <i class="fa fa-chevron-left"></i> My first post
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
       
     </footer>
   </div>
@@ -716,14 +571,15 @@
   </article>
 
 
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -743,8 +599,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -858,6 +723,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#暴力解法"><span class="nav-number">2.</span> <span class="nav-text">暴力解法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#双循环"><span class="nav-number">2.1.</span> <span class="nav-text">双循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#映射"><span class="nav-number">2.2.</span> <span class="nav-text">映射</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最优解法"><span class="nav-number">3.</span> <span class="nav-text">最优解法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#是否带环"><span class="nav-number">3.1.</span> <span class="nav-text">是否带环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#求入环节点"><span class="nav-number">3.2.</span> <span class="nav-text">求入环节点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实现"><span class="nav-number">4.</span> <span class="nav-text">代码实现</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
@@ -982,6 +864,10 @@
 
 
   
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
 
   
 
@@ -997,6 +883,8 @@
 
   
 
+
+  
 
 
   
