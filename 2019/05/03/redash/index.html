@@ -96,18 +96,24 @@
 
 
 
-  <meta name="description" content="欢迎来到我的blog!  这是我第一篇发布文章, 希望再此记录自己成长点点滴滴。 不定时记录自己近来学习心得，以及学习文章。 关于我简介 广州互联网行业中的小码农  技术方向 后端技术golangpython  兴趣 音乐(周杰伦的歌和孙燕姿的歌特别喜欢)运动(最近一直锻炼，执行消灭小肚腩计划中)游戏(英雄联盟、DNF都玩。段位最高去到铂金有点菜)  我的社区 Github:https://git">
-<meta name="keywords" content="个人">
+  <meta name="description" content="redash 实现原理  前言 Redash简介 相关技术 技术架构 一次查询过程 代码结构 模型关系  前言 前一段时间拜读过redash源码和部署过redash，经过几番周折，总算对redash有一定认识。在此记录前段时间的学习成果，此篇旨在抛砖引玉，如有错误请指出。 Redash简介 这里啰嗦一下，可能有一些大佬们不了解redash。redash是一款融合多数据源的可视化查询工具，可以说">
+<meta name="keywords" content="redash,python">
 <meta property="og:type" content="article">
-<meta property="og:title" content="My first post">
-<meta property="og:url" content="http://yoursite.com/2019/04/27/first/index.html">
+<meta property="og:title" content="redash">
+<meta property="og:url" content="http://yoursite.com/2019/05/03/redash/index.html">
 <meta property="og:site_name" content="黄少杰">
-<meta property="og:description" content="欢迎来到我的blog!  这是我第一篇发布文章, 希望再此记录自己成长点点滴滴。 不定时记录自己近来学习心得，以及学习文章。 关于我简介 广州互联网行业中的小码农  技术方向 后端技术golangpython  兴趣 音乐(周杰伦的歌和孙燕姿的歌特别喜欢)运动(最近一直锻炼，执行消灭小肚腩计划中)游戏(英雄联盟、DNF都玩。段位最高去到铂金有点菜)  我的社区 Github:https://git">
+<meta property="og:description" content="redash 实现原理  前言 Redash简介 相关技术 技术架构 一次查询过程 代码结构 模型关系  前言 前一段时间拜读过redash源码和部署过redash，经过几番周折，总算对redash有一定认识。在此记录前段时间的学习成果，此篇旨在抛砖引玉，如有错误请指出。 Redash简介 这里啰嗦一下，可能有一些大佬们不了解redash。redash是一款融合多数据源的可视化查询工具，可以说">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-27T05:56:54.758Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/head.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/architecture.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/code.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/code2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/model.png">
+<meta property="og:updated_time" content="2019-05-03T14:03:27.486Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="My first post">
-<meta name="twitter:description" content="欢迎来到我的blog!  这是我第一篇发布文章, 希望再此记录自己成长点点滴滴。 不定时记录自己近来学习心得，以及学习文章。 关于我简介 广州互联网行业中的小码农  技术方向 后端技术golangpython  兴趣 音乐(周杰伦的歌和孙燕姿的歌特别喜欢)运动(最近一直锻炼，执行消灭小肚腩计划中)游戏(英雄联盟、DNF都玩。段位最高去到铂金有点菜)  我的社区 Github:https://git">
+<meta name="twitter:title" content="redash">
+<meta name="twitter:description" content="redash 实现原理  前言 Redash简介 相关技术 技术架构 一次查询过程 代码结构 模型关系  前言 前一段时间拜读过redash源码和部署过redash，经过几番周折，总算对redash有一定认识。在此记录前段时间的学习成果，此篇旨在抛砖引玉，如有错误请指出。 Redash简介 这里啰嗦一下，可能有一些大佬们不了解redash。redash是一款融合多数据源的可视化查询工具，可以说">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/head.jpg">
 
 
 
@@ -115,7 +121,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/2019/04/27/first/">
+  <link rel="canonical" href="http://yoursite.com/2019/05/03/redash/">
 
 
 
@@ -125,7 +131,7 @@
   };
 </script>
 
-  <title>My first post | 黄少杰</title>
+  <title>redash | 黄少杰</title>
   
 
 
@@ -352,7 +358,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/27/first/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/03/redash/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="黄少杰">
@@ -369,7 +375,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">My first post
+          <h1 class="post-title" itemprop="name headline">redash
 
               
             
@@ -395,7 +401,7 @@
                 
               
 
-              <time title="创建时间：2019-04-27 08:51:32 / 修改时间：13:56:54" itemprop="dateCreated datePublished" datetime="2019-04-27T08:51:32+08:00">2019-04-27</time>
+              <time title="创建时间：2019-05-03 21:55:46 / 修改时间：22:03:27" itemprop="dateCreated datePublished" datetime="2019-05-03T21:55:46+08:00">2019-05-03</time>
             
 
             
@@ -407,8 +413,8 @@
           
             <span class="post-updated">
               &nbsp; | &nbsp; 更新于
-              <time itemprop="dateUpdated" datetime="2019-04-27T13:56:54+08:00" content="2019-04-27">
-                2019-04-27
+              <time itemprop="dateUpdated" datetime="2019-05-03T22:03:27+08:00" content="2019-05-03">
+                2019-05-03
               </time>
             </span>
           
@@ -424,7 +430,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/随记/" itemprop="url" rel="index"><span itemprop="name">随记</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
 
                 
                 
@@ -459,24 +465,88 @@
       
 
       
-        <p>欢迎来到我的<a href="https://socketsj.github.io/" target="_blank" rel="noopener">blog</a>! </p>
-<p>这是我第一篇发布文章, 希望再此记录自己成长点点滴滴。</p>
-<p>不定时记录自己近来学习心得，以及学习文章。</p>
-<h2 id="关于我"><a href="#关于我" class="headerlink" title="关于我"></a>关于我</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><blockquote>
-<p>广州互联网行业中的小码农</p>
-</blockquote>
-<h3 id="技术方向"><a href="#技术方向" class="headerlink" title="技术方向"></a>技术方向</h3><blockquote>
-<p>后端技术<br>golang<br>python</p>
-</blockquote>
-<h3 id="兴趣"><a href="#兴趣" class="headerlink" title="兴趣"></a>兴趣</h3><blockquote>
-<p>音乐(周杰伦的歌和孙燕姿的歌特别喜欢)<br>运动(最近一直锻炼，执行消灭小肚腩计划中)<br>游戏(英雄联盟、DNF都玩。段位最高去到铂金有点菜)</p>
-</blockquote>
-<h3 id="我的社区"><a href="#我的社区" class="headerlink" title="我的社区"></a>我的社区</h3><blockquote>
-<p>Github:<a href="https://github.com/Socketsj" target="_blank" rel="noopener">https://github.com/Socketsj</a></p>
-</blockquote>
-<h3 id="联系我"><a href="#联系我" class="headerlink" title="联系我"></a>联系我</h3><blockquote>
-<p>Email: <a href="mailto:282048277@qq.com" target="_blank" rel="noopener">282048277@qq.com</a></p>
-</blockquote>
+        <meta name="referrer" content="no-referrer">
+
+<h1 id="redash-实现原理"><a href="#redash-实现原理" class="headerlink" title="redash 实现原理"></a>redash 实现原理</h1><p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/head.jpg" alt="avatar"></p>
+<ul>
+<li><a href="#前言">前言</a></li>
+<li><a href="#Redash简介">Redash简介</a></li>
+<li><a href="#相关技术">相关技术</a></li>
+<li><a href="#技术架构">技术架构</a></li>
+<li><a href="#一次查询过程">一次查询过程</a></li>
+<li><a href="#代码结构">代码结构</a></li>
+<li><a href="#模型关系">模型关系</a></li>
+</ul>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p> 前一段时间拜读过redash源码和部署过redash，经过几番周折，总算对redash有一定认识。在此记录前段时间的学习成果，此篇旨在抛砖引玉，如有错误请指出。</p>
+<h2 id="Redash简介"><a href="#Redash简介" class="headerlink" title="Redash简介"></a>Redash简介</h2><p> 这里啰嗦一下，可能有一些大佬们不了解redash。redash是一款融合多数据源的可视化查询工具，可以说一个支持多数据源的数据可视化工具。深入了解前往<a href="https://redash.io/help/" target="_blank" rel="noopener">redash文档</a></p>
+<h2 id="相关技术"><a href="#相关技术" class="headerlink" title="相关技术"></a>相关技术</h2><h3 id="angular"><a href="#angular" class="headerlink" title="angular"></a>angular</h3><p>  前端使用angular版本1.5.8，对于当前版本算是比较旧的版本。这可能是redash项目开发较早和前端技术快速迭代更新有关。</p>
+<h3 id="python"><a href="#python" class="headerlink" title="python"></a>python</h3><p>  后端使用python2.7编写，算上一个”历久弥新”的版本</p>
+<h3 id="flask"><a href="#flask" class="headerlink" title="flask"></a>flask</h3><p>  使用flask作为web框架，处理http请求，<a href="https://dormousehole.readthedocs.io/en/latest/" target="_blank" rel="noopener">flask文档</a></p>
+<h3 id="sqlalchemy"><a href="#sqlalchemy" class="headerlink" title="sqlalchemy"></a>sqlalchemy</h3><p>  作为Redash的orm，用于redash后台信息的增删查改，如记录数据源，记录查询query等,<a href="https://docs.sqlalchemy.org/en/13/" target="_blank" rel="noopener">sqlalchemy</a></p>
+<h3 id="celery"><a href="#celery" class="headerlink" title="celery"></a>celery</h3><p>  celery是异步任务队列，用于redash中的异步任务，要理解redash原理必须先了解<a href="http://docs.jinkan.org/docs/celery/" target="_blank" rel="noopener">celery</a></p>
+<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/architecture.jpg" alt="avatar"></p>
+<p>  Redash采用的Celery异步架构，大部分功能模块都由异步任务完成。</p>
+<p>  redis作为消息中间件，每个执行异步任务的worker之间都是独立的。</p>
+<p>  query_runner是支持多数据源查询的关键部分，提供了各种数据源的查询引擎。</p>
+<p>  Postgresql存储查询过程中产生的数据以及配置信息如数据源。</p>
+<p>  webserve负责接受前端发来的请求发起异步任务。</p>
+<p>  前端主要是获取到后端返回数据，控制页面元素和css样式，提供可视化组件和基本功能。<br>所有与后端交互部分js逻辑处理，实现数据获取与功能跳转。</p>
+<h2 id="一次查询过程"><a href="#一次查询过程" class="headerlink" title="一次查询过程"></a>一次查询过程</h2><p> 查询功能是Redash的核心功能，通过了解查询过程结合架构图能更清晰了解Redash工作原理</p>
+<p> 编写好sql点击execute共有以下操作</p>
+<ul>
+<li>发送查询query和data_source_id到后端</li>
+<li>后端检查相关权限后，发起查询异步任务并返回job_id</li>
+<li>worker接受任务后，调用query_runner查询数据，查询完成后将结果查询到存到query_result，redis记录result_id</li>
+<li>前端发起events请求，后端接口接受并记录这次操作</li>
+<li>前端轮询job_id,后端判断这次job是否完成，若完成返回query_result_id</li>
+<li>前端发送query_result_id，后端接收后查询对应query_result返回，查询结束</li>
+</ul>
+<h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><p> Redash代码结构模块化做的非常好，通过目录名可以分析出代码功能定位</p>
+<p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/code.png" alt="avatar"></p>
+<ul>
+<li>client 此目录下主要是前端文件如html模板、js文件和css文件等</li>
+<li>redash 此目录为后端逻辑也是Redash的核心代码部分</li>
+<li><p>test 针对redash目录中代码单元测试代码</p>
+<p>以下是Redash目录下的结构</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/code2.png" alt="avatar"></p>
+<ul>
+<li>authentication 权限认证模块如权限认证和登录相关功能</li>
+<li>cli Redash的命令行操作如建表、添加数据源、测试函数等。提供命令行操作接口</li>
+<li>destination Redash上通知模块，定义通知类型如邮件通知</li>
+<li>handles 后端接口定义</li>
+<li>metrics 统计指标相关</li>
+<li>models 模型定义，后台模型类定义是Redash设计核心</li>
+<li>query_runner Redash的查询引擎，支持各种数据源关键部分</li>
+<li>settings 配置文件</li>
+<li>tasks 定时任务和异步任务定义</li>
+<li>templates html模板如发送邮件模板等</li>
+<li>util 通用工具包</li>
+</ul>
+<h2 id="模型关系"><a href="#模型关系" class="headerlink" title="模型关系"></a>模型关系</h2><p> 模型关系是Redash后台设计的核心部分，模型定义了Redash后台功能。<br> 由于model过多，为方便了解模型一些关系连线会删除</p>
+<p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/model.png" alt="avatar"></p>
+<ul>
+<li>access_permission, 权限表</li>
+<li>alembic_version,版本号</li>
+<li>alert_subscriptions，报警描述</li>
+<li>alerts，报警列表</li>
+<li>api_keys, api key管理</li>
+<li>changes，升级改动</li>
+<li>dashboards，报表存储</li>
+<li>data_source_groups,每个组对应的数据源</li>
+<li>data_sources，所有数据源</li>
+<li>events，后台日志</li>
+<li>groups，所有分组列表</li>
+<li>notification_destinations，报警的模板和目的地</li>
+<li>organizations， 组织</li>
+<li>queries，所有queris</li>
+<li>query_results，query的结果，另一种缓存</li>
+<li>query_snippets，SQL的评论</li>
+<li>users, 用户已列表</li>
+<li>visualizations，可视化图表存储</li>
+<li>widgets，可视化控件</li>
+</ul>
 
       
     </div>
@@ -500,7 +570,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/个人/" rel="tag"># 个人</a>
+            <a href="/tags/redash/" rel="tag"># redash</a>
+          
+            <a href="/tags/python/" rel="tag"># python</a>
           
         </div>
       
@@ -513,15 +585,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2019/05/02/hexo2/" rel="next" title="hexo next 主题搭建个人博客">
+                <i class="fa fa-chevron-left"></i> hexo next 主题搭建个人博客
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/04/28/leetcode160/" rel="prev" title="leetcode160">
-                leetcode160 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -712,7 +784,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于我"><span class="nav-number">1.</span> <span class="nav-text">关于我</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#技术方向"><span class="nav-number">1.2.</span> <span class="nav-text">技术方向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#兴趣"><span class="nav-number">1.3.</span> <span class="nav-text">兴趣</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#我的社区"><span class="nav-number">1.4.</span> <span class="nav-text">我的社区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#联系我"><span class="nav-number">1.5.</span> <span class="nav-text">联系我</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redash-实现原理"><span class="nav-number">1.</span> <span class="nav-text">redash 实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redash简介"><span class="nav-number">1.2.</span> <span class="nav-text">Redash简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关技术"><span class="nav-number">1.3.</span> <span class="nav-text">相关技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#angular"><span class="nav-number">1.3.1.</span> <span class="nav-text">angular</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python"><span class="nav-number">1.3.2.</span> <span class="nav-text">python</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flask"><span class="nav-number">1.3.3.</span> <span class="nav-text">flask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sqlalchemy"><span class="nav-number">1.3.4.</span> <span class="nav-text">sqlalchemy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#celery"><span class="nav-number">1.3.5.</span> <span class="nav-text">celery</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#技术架构"><span class="nav-number">1.4.</span> <span class="nav-text">技术架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一次查询过程"><span class="nav-number">1.5.</span> <span class="nav-text">一次查询过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码结构"><span class="nav-number">1.6.</span> <span class="nav-text">代码结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型关系"><span class="nav-number">1.7.</span> <span class="nav-text">模型关系</span></a></li></ol></li></ol></div>
             
 
           </div>
