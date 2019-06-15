@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="有一天突发奇想，上去服务器去看看服务器的连接状态。发现大部分连接都是establish，有一小部分是time_wait。   正常情况tcp连接成功后自然是establish状态，但是time_wait是怎么来的呢？查询过资料time_wait过多会影响服务器性能？ time_wait怎么来的tcp四次挥手   上面是一个TCP连接四次挥手的过程。从图中得知主动关闭tcp连接的一方会进入tim">
+<meta name="keywords" content="计算机网络,计算机基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="time wait的问题">
+<meta property="og:url" content="http://yoursite.com/2019/06/15/time-wait/index.html">
+<meta property="og:site_name" content="黄少杰">
+<meta property="og:description" content="有一天突发奇想，上去服务器去看看服务器的连接状态。发现大部分连接都是establish，有一小部分是time_wait。   正常情况tcp连接成功后自然是establish状态，但是time_wait是怎么来的呢？查询过资料time_wait过多会影响服务器性能？ time_wait怎么来的tcp四次挥手   上面是一个TCP连接四次挥手的过程。从图中得知主动关闭tcp连接的一方会进入tim">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/06/15/time-wait/fin.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/06/15/time-wait/struct.jpg">
+<meta property="og:updated_time" content="2019-06-15T14:47:33.790Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="time wait的问题">
+<meta name="twitter:description" content="有一天突发奇想，上去服务器去看看服务器的连接状态。发现大部分连接都是establish，有一小部分是time_wait。   正常情况tcp连接成功后自然是establish状态，但是time_wait是怎么来的呢？查询过资料time_wait过多会影响服务器性能？ time_wait怎么来的tcp四次挥手   上面是一个TCP连接四次挥手的过程。从图中得知主动关闭tcp连接的一方会进入tim">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/15/time-wait/fin.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/06/15/time-wait/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>time wait的问题 | 黄少杰</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">黄少杰</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">个人博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/Socketsj" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/15/time-wait/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="黄少杰">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄少杰">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">time wait的问题
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-15 15:58:48 / 修改时间：22:47:33" itemprop="dateCreated datePublished" datetime="2019-06-15T15:58:48+08:00">2019-06-15</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+          
+            <span class="post-updated">
+              &nbsp; | &nbsp; 更新于
+              <time itemprop="dateUpdated" datetime="2019-06-15T22:47:33+08:00" content="2019-06-15">
+                2019-06-15
+              </time>
+            </span>
+          
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算机网络/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><meta name="referrer" content="no-referrer"><br>  有一天突发奇想，上去服务器去看看服务器的连接状态。发现大部分连接都是establish，有一小部分是time_wait。</p>
+<p>  正常情况tcp连接成功后自然是establish状态，但是time_wait是怎么来的呢？查询过资料time_wait过多会影响服务器性能？</p>
+<h1 id="time-wait怎么来的"><a href="#time-wait怎么来的" class="headerlink" title="time_wait怎么来的"></a>time_wait怎么来的</h1><h2 id="tcp四次挥手"><a href="#tcp四次挥手" class="headerlink" title="tcp四次挥手"></a>tcp四次挥手</h2><p> <img src="/2019/06/15/time-wait/fin.jpg" alt></p>
+<p> 上面是一个TCP连接四次挥手的过程。从图中得知主动关闭tcp连接的一方会进入time_wait状态，等待2MSL时间后才进入close。</p>
+<p> 一般情况关闭tcp连接的服务器一段，如果此时有一部分连接开始关闭了(time_wait存在时间够长)，可以解析这时有一部分连接是处于time_wait。</p>
+<h2 id="为什么需要time-wait"><a href="#为什么需要time-wait" class="headerlink" title="为什么需要time_wait"></a>为什么需要time_wait</h2><p> 为什么需要time_wait这一个过渡状态，不可以直接进入close吗？</p>
+<h3 id="1-防止ack包丢失"><a href="#1-防止ack包丢失" class="headerlink" title="(1)防止ack包丢失"></a>(1)防止ack包丢失</h3><p> 在tcp的四次挥手中，最后一个ACK包是主动关闭方发送的，用于响应被动关闭方发送的FIN包。 由于最后一个发送的ACK包有可能会丢失，被动关闭方会在一个超时时间后再发送一个FIN包。所以主动关闭方必须维持这个状态接受重发的FIN包和重发ACK包。</p>
+<h3 id="2-允许老的重复分节在网络中消逝"><a href="#2-允许老的重复分节在网络中消逝" class="headerlink" title="(2)允许老的重复分节在网络中消逝"></a>(2)允许老的重复分节在网络中消逝</h3><p> 在进行四次挥手关闭连接前，发送的数据包有可能因为网络延迟暂时没有发送到目的地。若没有time_wait后面tcp连接关闭了，服务器建立tcp连接有可能会复用以前的端口。在建立新的连接后，之前迷路的包重新到达目的端口。这个时候收到一个不是连接对方的包，会发送一个RCT包强制中断这次连接。为了避免这个尴尬的情况，关闭连接保持time_wait状态，让迷路的包在time_wait下全部收到。</p>
+<h2 id="为什么要等2msl"><a href="#为什么要等2msl" class="headerlink" title="为什么要等2msl"></a>为什么要等2msl</h2><p> MSL是maximum segment lifetime(最大分节生命期），这是一个IP数据包能在互联网上生存的最长时间，超过这个时间将在网络中消失。 time_wait状态保持2MSL，就能保证被动关闭方没有重发FIN包，所有迷路的数据包都在这个时候收到了。</p>
+<h1 id="为什么会出现大量time-wait"><a href="#为什么会出现大量time-wait" class="headerlink" title="为什么会出现大量time_wait"></a>为什么会出现大量time_wait</h1><p> 上面可以知道，time_wait是主动关闭tcp连接的一个过渡状态，可以得出有如下情况会出现大量time_wait</p>
+<ol>
+<li>高并发的短链接。服务器处理大量短链接的时候，大部分的连接都处于结束状态就有大量的time_wait。</li>
+<li><p>服务器的连接数达到瓶颈。服务器达到瓶颈时候会断开一些无用连接这个时候就有大量time_wait。</p>
+<p>大量的time_wait会占用服务器的连接数，且浪费服务器资源去处理time_wit状态，严重影响服务器性能。</p>
+</li>
+</ol>
+<h1 id="如何处理大量time-wait"><a href="#如何处理大量time-wait" class="headerlink" title="如何处理大量time_wait"></a>如何处理大量time_wait</h1><p> time_wait的存在十分合理，但是多起来对服务器影响又很大。这个问题好像变的无解了。其实并不是主要两个方向解决，连接的快速回收和复用。</p>
+<p> 下面处理都是/etc/sysctl.conf的参数调整。以下我们先熟悉以下该配置重要参数。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.tcp_timestamps</span><br></pre></td></tr></table></figure>
+<p> RFC 1323 在 TCP Reliability一节里，引入了timestamp的TCP option，两个4字节的时间戳字段，其中第一个4字节字段用来保存发送该数据包的时间，第二个4字节字段用来保存最近一次接收对方发送到数据的时间。有了这两个时间字段，也就有了后续优化的余地。tcp_tw_reuse 和 tcp_tw_recycle就依赖这些时间字段。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.tcp_tw_reuse</span><br></pre></td></tr></table></figure>
+<p> 出现TIME_WAIT状态的连接，一定出现在主动关闭连接的一方。所以，当主动关闭连接的一方，再次向对方发起连接请求的时候（例如，客户端关闭连接，客户端再次连接服务端，此时可以复用了；负载均衡服务器，主动关闭后端的连接，当有新的HTTP请求，负载均衡服务器再次连接后端服务器，此时也可以复用），可以复用TIME_WAIT状态的连接。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.tcp_tw_recycle</span><br></pre></td></tr></table></figure>
+<p> 当开启了这个配置后，内核会快速的回收处于TIME_WAIT状态的socket连接。一个RTO（retransmission timeout，数据包重传的timeout时间）的时间后回收，这个时间根据RTT动态计算出来，但是远小于2MSL。当服务器再次使用这个端口(这里不是重启)，内核里会记录包括该socket连接对应的五元组中的对方IP等在内的一些统计数据，当然也包括从该对方IP所接收到的最近的一次数据包时间。当有新的数据包到达，只要时间晚于内核记录的这个时间，数据包都会被统统的丢掉。</p>
+<p> <img src="/2019/06/15/time-wait/struct.jpg" alt></p>
+<p> 一般服务架构如上图,客户端通过HTTP/1.1连接负载均衡，也就是说，HTTP协议投Connection为keep-alive，所以我们假定，客户端 对 负载均衡服务器 的socket连接，客户端会断开连接，所以，TIME_WAIT出现在客户端Web服务器和MySQL服务器的连接，我们假定，Web服务器上的程序在连接结束的时候，调用close操作关闭socket资源连接，所以，TIME_WAIT出现在 Web 服务器端。</p>
+<p>  所以Web服务器上，肯定可以配置开启的配置：tcp_tw_reuse；如果Web服务器有很多连向DB服务器的连接，可以保证socket连接的复用。那么，负载均衡服务器和Web服务器，谁先关闭连接，则决定了我们怎么配置tcp_tw_reuse/tcp_tw_recycle了</p>
+<h2 id="负载均衡-首先关闭连接"><a href="#负载均衡-首先关闭连接" class="headerlink" title="负载均衡 首先关闭连接"></a>负载均衡 首先关闭连接</h2><p> 在这种情况下，因为负载均衡服务器对Web服务器的连接，TIME_WAIT大都出现在负载均衡服务器上，<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 在负载均衡服务器上的配置</span><br><span class="line">net.ipv4.tcp_tw_reuse = 1 //尽量复用连接</span><br><span class="line">net.ipv4.tcp_tw_recycle = 0</span><br><span class="line"></span><br><span class="line"># 在Web服务器上的配置</span><br><span class="line">net.ipv4.tcp_tw_reuse = 1 //这个配置主要影响的是Web服务器到DB服务器的连接复用</span><br><span class="line">net.ipv4.tcp_tw_recycle： 设置成1和0都没有任何意义</span><br></pre></td></tr></table></figure></p>
+<p> 在负载均衡和它的连接中，它是服务端，但是TIME_WAIT出现在负载均衡服务器上；它和DB的连接，它是客户端，recycle对它并没有什么影响，关键是reuse。</p>
+<h2 id="Web服务器首先关闭来自负载均衡服务器的连接"><a href="#Web服务器首先关闭来自负载均衡服务器的连接" class="headerlink" title="Web服务器首先关闭来自负载均衡服务器的连接"></a>Web服务器首先关闭来自负载均衡服务器的连接</h2><p> 在这种情况下，Web服务器变成TIME_WAIT的重灾区。负载均衡对Web服务器的连接，由Web服务器首先关闭连接，TIME_WAIT出现在Web服务器上。；Web服务器对DB服务器的连接，由Web服务器关闭连接，TIME_WAIT也出现在web服务器上。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 负载均衡服务器上的配置</span><br><span class="line">net.ipv4.tcp_tw_reuse：0 或者 1 都行，都没有实际意义</span><br><span class="line">net.ipv4.tcp_tw_recycle=0 //一定是关闭recycle</span><br><span class="line"></span><br><span class="line"># 在Web服务器上的配置</span><br><span class="line">net.ipv4.tcp_tw_reuse = 1 //这个配置主要影响的是Web服务器到DB服务器的连接复用</span><br><span class="line">net.ipv4.tcp_tw_recycle=1 //由于在负载均衡和Web服务器之间并没有NAT的网络，可以考虑开启recycle，加速由于负载均衡和Web服务器之间的连接造成的大量TIME_WAIT</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/计算机网络/" rel="tag"># 计算机网络</a>
+          
+            <a href="/tags/计算机基础/" rel="tag"># 计算机基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/08/goroutine/" rel="next" title="golang协程">
+                <i class="fa fa-chevron-left"></i> golang协程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="黄少杰">
+            
+              <p class="site-author-name" itemprop="name">黄少杰</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/Socketsj" title="GitHub &rarr; https://github.com/Socketsj" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:282048277@qq.com" title="E-Mail &rarr; mailto:282048277@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#time-wait怎么来的"><span class="nav-number">1.</span> <span class="nav-text">time_wait怎么来的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp四次挥手"><span class="nav-number">1.1.</span> <span class="nav-text">tcp四次挥手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要time-wait"><span class="nav-number">1.2.</span> <span class="nav-text">为什么需要time_wait</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-防止ack包丢失"><span class="nav-number">1.2.1.</span> <span class="nav-text">(1)防止ack包丢失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-允许老的重复分节在网络中消逝"><span class="nav-number">1.2.2.</span> <span class="nav-text">(2)允许老的重复分节在网络中消逝</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要等2msl"><span class="nav-number">1.3.</span> <span class="nav-text">为什么要等2msl</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么会出现大量time-wait"><span class="nav-number">2.</span> <span class="nav-text">为什么会出现大量time_wait</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何处理大量time-wait"><span class="nav-number">3.</span> <span class="nav-text">如何处理大量time_wait</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#负载均衡-首先关闭连接"><span class="nav-number">3.1.</span> <span class="nav-text">负载均衡 首先关闭连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web服务器首先关闭来自负载均衡服务器的连接"><span class="nav-number">3.2.</span> <span class="nav-text">Web服务器首先关闭来自负载均衡服务器的连接</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">黄少杰</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
