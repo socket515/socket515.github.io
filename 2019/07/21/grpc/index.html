@@ -96,24 +96,20 @@
 
 
 
-  <meta name="description" content="redash 实现原理  前言 Redash简介 相关技术 技术架构 一次查询过程 代码结构 模型关系  前言 前一段时间拜读过redash源码和部署过redash，经过几番周折，总算对redash有一定认识。在此记录前段时间的学习成果，此篇旨在抛砖引玉，如有错误请指出。 Redash简介 这里啰嗦一下，可能有一些大佬们不了解redash。redash是一款融合多数据源的可视化查询工具，可以说">
-<meta name="keywords" content="redash,python">
+  <meta name="description" content="grpc是rpc框架的一种，定义了远程方法调用的方式。最近总结学习了一些关于grpc的知识，从rpc开始切入，写下这篇文章。 RPC rpc是远程过程调用(Remote Procedure Call，缩写为 RPC)。是一种计算机通信协议，该协议允许运行于一台计算机的程序调用另一台计算机的子程序，而程序员无需额外地为这个交互作用编程。 如果涉及的软件采用面向对象编程，那么远程过程调用亦可称作">
 <meta property="og:type" content="article">
-<meta property="og:title" content="redash">
-<meta property="og:url" content="http://yoursite.com/2019/05/03/redash/index.html">
+<meta property="og:title" content="grpc">
+<meta property="og:url" content="http://yoursite.com/2019/07/21/grpc/index.html">
 <meta property="og:site_name" content="黄少杰">
-<meta property="og:description" content="redash 实现原理  前言 Redash简介 相关技术 技术架构 一次查询过程 代码结构 模型关系  前言 前一段时间拜读过redash源码和部署过redash，经过几番周折，总算对redash有一定认识。在此记录前段时间的学习成果，此篇旨在抛砖引玉，如有错误请指出。 Redash简介 这里啰嗦一下，可能有一些大佬们不了解redash。redash是一款融合多数据源的可视化查询工具，可以说">
+<meta property="og:description" content="grpc是rpc框架的一种，定义了远程方法调用的方式。最近总结学习了一些关于grpc的知识，从rpc开始切入，写下这篇文章。 RPC rpc是远程过程调用(Remote Procedure Call，缩写为 RPC)。是一种计算机通信协议，该协议允许运行于一台计算机的程序调用另一台计算机的子程序，而程序员无需额外地为这个交互作用编程。 如果涉及的软件采用面向对象编程，那么远程过程调用亦可称作">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/head.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/architecture.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/code.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/code2.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/model.png">
-<meta property="og:updated_time" content="2019-05-03T14:03:27.486Z">
+<meta property="og:image" content="http://yoursite.com/2019/07/21/grpc/rpc.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/07/21/grpc/grpc.jpg">
+<meta property="og:updated_time" content="2019-07-21T11:18:28.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="redash">
-<meta name="twitter:description" content="redash 实现原理  前言 Redash简介 相关技术 技术架构 一次查询过程 代码结构 模型关系  前言 前一段时间拜读过redash源码和部署过redash，经过几番周折，总算对redash有一定认识。在此记录前段时间的学习成果，此篇旨在抛砖引玉，如有错误请指出。 Redash简介 这里啰嗦一下，可能有一些大佬们不了解redash。redash是一款融合多数据源的可视化查询工具，可以说">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/Socketsj/redash/master/images/head.jpg">
+<meta name="twitter:title" content="grpc">
+<meta name="twitter:description" content="grpc是rpc框架的一种，定义了远程方法调用的方式。最近总结学习了一些关于grpc的知识，从rpc开始切入，写下这篇文章。 RPC rpc是远程过程调用(Remote Procedure Call，缩写为 RPC)。是一种计算机通信协议，该协议允许运行于一台计算机的程序调用另一台计算机的子程序，而程序员无需额外地为这个交互作用编程。 如果涉及的软件采用面向对象编程，那么远程过程调用亦可称作">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/21/grpc/rpc.jpg">
 
 
 
@@ -121,7 +117,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/2019/05/03/redash/">
+  <link rel="canonical" href="http://yoursite.com/2019/07/21/grpc/">
 
 
 
@@ -131,7 +127,7 @@
   };
 </script>
 
-  <title>redash | 黄少杰</title>
+  <title>grpc | 黄少杰</title>
   
 
 
@@ -358,7 +354,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/03/redash/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/21/grpc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="黄少杰">
@@ -375,7 +371,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">redash
+          <h1 class="post-title" itemprop="name headline">grpc
 
               
             
@@ -401,7 +397,7 @@
                 
               
 
-              <time title="创建时间：2019-05-03 21:55:46 / 修改时间：22:03:27" itemprop="dateCreated datePublished" datetime="2019-05-03T21:55:46+08:00">2019-05-03</time>
+              <time title="创建时间：2019-07-21 16:48:54 / 修改时间：19:18:28" itemprop="dateCreated datePublished" datetime="2019-07-21T16:48:54+08:00">2019-07-21</time>
             
 
             
@@ -413,29 +409,11 @@
           
             <span class="post-updated">
               &nbsp; | &nbsp; 更新于
-              <time itemprop="dateUpdated" datetime="2019-05-03T22:03:27+08:00" content="2019-05-03">
-                2019-05-03
+              <time itemprop="dateUpdated" datetime="2019-07-21T19:18:28+08:00" content="2019-07-21">
+                2019-07-21
               </time>
             </span>
           
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -467,86 +445,50 @@
       
         <meta name="referrer" content="no-referrer">
 
-<h1 id="redash-实现原理"><a href="#redash-实现原理" class="headerlink" title="redash 实现原理"></a>redash 实现原理</h1><p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/head.jpg" alt="avatar"></p>
+<p> grpc是rpc框架的一种，定义了远程方法调用的方式。最近总结学习了一些关于grpc的知识，从rpc开始切入，写下这篇文章。</p>
+<h1 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h1><p> rpc是远程过程调用(Remote Procedure Call，缩写为 RPC)。是一种计算机通信协议，该协议允许运行于一台计算机的程序调用另一台计算机的子程序，而程序员无需额外地为这个交互作用编程。 如果涉及的软件采用面向对象编程，那么远程过程调用亦可称作远程调用或远程方法调用</p>
+<p> <img src="/2019/07/21/grpc/rpc.jpg" alt></p>
+<p> 上图为rpc调用过程, RPC 本身是 client-server模型,也是一种 request-response 协议。不同的rpc框架本质都是客户端发起请求，服务器作出响应。</p>
+<p> 服务的调用过程为：</p>
+<ol>
+<li>client调用client stub，这是一次本地过程调用</li>
+<li>client stub将参数打包成一个消息，然后发送这个消息。打包过程也叫做 marshalling</li>
+<li>client所在的系统将消息发送给server</li>
+<li>server的的系统将收到的包传给server stub</li>
+<li>server stub解包得到参数。 解包也被称作 unmarshalling</li>
+<li><p>最后server stub调用服务过程. 返回结果按照相反的步骤传给client</p>
+<p>RPC只是描绘了 Client 与 Server 之间的点对点调用流程，包括 stub、通信、RPC 消息解析等部分，在实际应用中，还需要考虑服务的高可用、负载均衡等问题，所以产品级的 RPC 框架除了点对点的 RPC 协议的具体实现外，还应包括服务的发现与注销、提供服务的多台 Server 的负载均衡、服务的高可用等更多的功能。 目前的 RPC 框架大致有两种不同的侧重方向，一种偏重于服务治理，另一种偏重于跨语言调用。</p>
+</li>
+</ol>
+<h1 id="gRPC"><a href="#gRPC" class="headerlink" title="gRPC"></a>gRPC</h1><p> gRPC就是一种偏向于跨语言调用的rpc框架，由Google开源。</p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p> 一个客户端程序可以直接调用一个服务端程序中的方法，这个服务端程序可以是在另外一台机器上，调用起来就像它是一个本地对象，这就方便你创造分布式的应用和服务。</p>
+<p> <img src="/2019/07/21/grpc/grpc.jpg" alt></p>
+<p> 正如需要RPC系统那样，gRPC的思想基础也是：定义一个服务，然后指定方法可以通过参数和返回类型，来远程调用它们。在服务端，程序实现这个接口，并且运行一个gRPC服务器来处理客户端调用。在客户端，有一个存根（stub，即为用任何语言写的客户端程序），它提供了和服务端相同的方法。</p>
+<h2 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h2><p> 通信过程需要定义一种数据格式，比如json、xml等都是一种数据格式。grpc使用proto buffer，用来序列化结构化的数据。proto buffer也是Google的一个成熟开源框架。</p>
+<p> 使用proto buffer，先定义.proto后缀的proto文件。proto buffer的数据被结构化为消息，每一个message都是一个小的逻辑记录，包含了一系列的被称为fields的name-value对信息。例如proto文件定义如下。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">message Person &#123;</span><br><span class="line">	string name = 1;</span><br><span class="line">    int32 id = 2;</span><br><span class="line">    bool has_ponycopter = 3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 定义好proto文件后，使用<code>protoc</code>编辑器。生成对应编程语言的类文件如Python、Java和Golang等。然后就可以使用这个类反序列化和序列化进行grpc通信。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// The greeter service definition.</span><br><span class="line">service Greeter &#123;</span><br><span class="line">  // Sends a greeting</span><br><span class="line">  rpc SayHello (HelloRequest) returns (HelloReply) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// The request message containing the user&apos;s name.</span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// The response message containing the greetings</span><br><span class="line">message HelloReply &#123;</span><br><span class="line">  string message = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> gRPC还使用<code>protoc</code>和一个特殊的gRPC插件，从proto文件中生成代码。并且，通过gRPC插件，你可以得到生成的gRPC客户端和服务端代码，就像上面那样用来填充，序列化，和接收消息类型的规则protocol buffer代码一样。</p>
+<h2 id="gRPC通信方法"><a href="#gRPC通信方法" class="headerlink" title="gRPC通信方法"></a>gRPC通信方法</h2><h3 id="一元RPC"><a href="#一元RPC" class="headerlink" title="一元RPC"></a>一元RPC</h3><p> 这是最简单的RPC类型，客户端向服务器发送一个单独请求，并且获取一个单一响应，就像一个普通的方法调用。</p>
 <ul>
-<li><a href="#前言">前言</a></li>
-<li><a href="#Redash简介">Redash简介</a></li>
-<li><a href="#相关技术">相关技术</a></li>
-<li><a href="#技术架构">技术架构</a></li>
-<li><a href="#一次查询过程">一次查询过程</a></li>
-<li><a href="#代码结构">代码结构</a></li>
-<li><a href="#模型关系">模型关系</a></li>
-</ul>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p> 前一段时间拜读过redash源码和部署过redash，经过几番周折，总算对redash有一定认识。在此记录前段时间的学习成果，此篇旨在抛砖引玉，如有错误请指出。</p>
-<h2 id="Redash简介"><a href="#Redash简介" class="headerlink" title="Redash简介"></a>Redash简介</h2><p> 这里啰嗦一下，可能有一些大佬们不了解redash。redash是一款融合多数据源的可视化查询工具，可以说一个支持多数据源的数据可视化工具。深入了解前往<a href="https://redash.io/help/" target="_blank" rel="noopener">redash文档</a></p>
-<h2 id="相关技术"><a href="#相关技术" class="headerlink" title="相关技术"></a>相关技术</h2><h3 id="angular"><a href="#angular" class="headerlink" title="angular"></a>angular</h3><p>  前端使用angular版本1.5.8，对于当前版本算是比较旧的版本。这可能是redash项目开发较早和前端技术快速迭代更新有关。</p>
-<h3 id="python"><a href="#python" class="headerlink" title="python"></a>python</h3><p>  后端使用python2.7编写，算上一个”历久弥新”的版本</p>
-<h3 id="flask"><a href="#flask" class="headerlink" title="flask"></a>flask</h3><p>  使用flask作为web框架，处理http请求，<a href="https://dormousehole.readthedocs.io/en/latest/" target="_blank" rel="noopener">flask文档</a></p>
-<h3 id="sqlalchemy"><a href="#sqlalchemy" class="headerlink" title="sqlalchemy"></a>sqlalchemy</h3><p>  作为Redash的orm，用于redash后台信息的增删查改，如记录数据源，记录查询query等,<a href="https://docs.sqlalchemy.org/en/13/" target="_blank" rel="noopener">sqlalchemy</a></p>
-<h3 id="celery"><a href="#celery" class="headerlink" title="celery"></a>celery</h3><p>  celery是异步任务队列，用于redash中的异步任务，要理解redash原理必须先了解<a href="http://docs.jinkan.org/docs/celery/" target="_blank" rel="noopener">celery</a></p>
-<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/architecture.jpg" alt="avatar"></p>
-<p>  Redash采用的Celery异步架构，大部分功能模块都由异步任务完成。</p>
-<p>  redis作为消息中间件，每个执行异步任务的worker之间都是独立的。</p>
-<p>  query_runner是支持多数据源查询的关键部分，提供了各种数据源的查询引擎。</p>
-<p>  Postgresql存储查询过程中产生的数据以及配置信息如数据源。</p>
-<p>  webserve负责接受前端发来的请求发起异步任务。</p>
-<p>  前端主要是获取到后端返回数据，控制页面元素和css样式，提供可视化组件和基本功能。<br>所有与后端交互部分js逻辑处理，实现数据获取与功能跳转。</p>
-<h2 id="一次查询过程"><a href="#一次查询过程" class="headerlink" title="一次查询过程"></a>一次查询过程</h2><p> 查询功能是Redash的核心功能，通过了解查询过程结合架构图能更清晰了解Redash工作原理</p>
-<p> 编写好sql点击execute共有以下操作</p>
-<ul>
-<li>发送查询query和data_source_id到后端</li>
-<li>后端检查相关权限后，发起查询异步任务并返回job_id</li>
-<li>worker接受任务后，调用query_runner查询数据，查询完成后将结果查询到存到query_result，redis记录result_id</li>
-<li>前端发起events请求，后端接口接受并记录这次操作</li>
-<li>前端轮询job_id,后端判断这次job是否完成，若完成返回query_result_id</li>
-<li>前端发送query_result_id，后端接收后查询对应query_result返回，查询结束</li>
-</ul>
-<h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><p> Redash代码结构模块化做的非常好，通过目录名可以分析出代码功能定位</p>
-<p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/code.png" alt="avatar"></p>
-<ul>
-<li>client 此目录下主要是前端文件如html模板、js文件和css文件等</li>
-<li>redash 此目录为后端逻辑也是Redash的核心代码部分</li>
-<li><p>test 针对redash目录中代码单元测试代码</p>
-<p>以下是Redash目录下的结构</p>
+<li><p>当客户端调用本地对象stub上的方法时，服务端就会收到通知说RPC已经被调用，包含有这次调用的客户端元数据（metadata），方法名，还有指定的期限（deadline）如果可用。</p>
+</li>
+<li><p>服务器可以选择直接发回它自己的初始元数据（必须在任何响应之前发送），或者等待客户端的请求消息 – 先发生那种情况，由应用程序指定。</p>
+</li>
+<li><p>一旦服务器有了客户端的请求消息，它就开始进行产生并填充响应的相关工作。响应随即被返回（如果成功）至客户端，包含了状态详情（状态码，和可选的状态消息），以及可选的拖尾元数据（trailing metadata）</p>
+</li>
+<li><p>如果状态是OK，客户端会得到响应，然后由客户端这边完成本次调用。</p>
+<p>定义方式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpc SayHello(HelloRequest) returns (HelloResponse)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/code2.png" alt="avatar"></p>
-<ul>
-<li>authentication 权限认证模块如权限认证和登录相关功能</li>
-<li>cli Redash的命令行操作如建表、添加数据源、测试函数等。提供命令行操作接口</li>
-<li>destination Redash上通知模块，定义通知类型如邮件通知</li>
-<li>handles 后端接口定义</li>
-<li>metrics 统计指标相关</li>
-<li>models 模型定义，后台模型类定义是Redash设计核心</li>
-<li>query_runner Redash的查询引擎，支持各种数据源关键部分</li>
-<li>settings 配置文件</li>
-<li>tasks 定时任务和异步任务定义</li>
-<li>templates html模板如发送邮件模板等</li>
-<li>util 通用工具包</li>
-</ul>
-<h2 id="模型关系"><a href="#模型关系" class="headerlink" title="模型关系"></a>模型关系</h2><p> 模型关系是Redash后台设计的核心部分，模型定义了Redash后台功能。<br> 由于model过多，为方便了解模型一些关系连线会删除</p>
-<p><img src="https://raw.githubusercontent.com/Socketsj/redash/master/images/model.png" alt="avatar"></p>
-<ul>
-<li>access_permission, 权限表</li>
-<li>alembic_version,版本号</li>
-<li>alert_subscriptions，报警描述</li>
-<li>alerts，报警列表</li>
-<li>api_keys, api key管理</li>
-<li>changes，升级改动</li>
-<li>dashboards，报表存储</li>
-<li>data_source_groups,每个组对应的数据源</li>
-<li>data_sources，所有数据源</li>
-<li>events，后台日志</li>
-<li>groups，所有分组列表</li>
-<li>notification_destinations，报警的模板和目的地</li>
-<li>organizations， 组织</li>
-<li>queries，所有queris</li>
-<li>query_results，query的结果，另一种缓存</li>
-<li>query_snippets，SQL的评论</li>
-<li>users, 用户已列表</li>
-<li>visualizations，可视化图表存储</li>
-<li>widgets，可视化控件</li>
-</ul>
+<h3 id="服务端流式RPC"><a href="#服务端流式RPC" class="headerlink" title="服务端流式RPC"></a>服务端流式RPC</h3><p> 一个服务端流式RPC和我们的简单样例很相似，除了服务端在收到客户端请求消息后，返回一个响应流。当返回完它的所有响应后，服务端的状态详情（状态码，和可选的状态消息）以及可选的拖尾元数据会被返回，以此完成服务端部分的工作。而客户端一旦得到服务器的所有响应就会完成本次调用。</p>
+<p> 定义方式<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpc LotsOfReplies(HelloRequest) returns (stream HelloResponse)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="客户端流式RPC"><a href="#客户端流式RPC" class="headerlink" title="客户端流式RPC"></a>客户端流式RPC</h3><p> 一个客户端流式RPC也和我们的例子很相似，除了客户端向服务器发送一个请求流，而不是一个单独请求。服务器返回一个单独响应，当服务器获取到客户端所有请求后，它一般都会在响应中，附带上状态详情和可选的拖尾元数据，但这不是必需的。</p>
+<p> 定义方式<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="双向流式RPC"><a href="#双向流式RPC" class="headerlink" title="双向流式RPC"></a>双向流式RPC</h3><p> 在双向流式RPC中，也同样是客户端发起通信，调用方法，并且服务端接收客户端元数据，方法名，和期限。服务端也同样是可以选择发回它的初始元数据，或者是等待客户端开始发送请求。</p>
+<p> 接下来发生什么取决于应用程序，由于客户端和服务器可以以任意顺序进行读写 – 流操作是完全独立的。所以，举个例子，服务器可以等待直到它收到客户端的所有消息，然后开始写响应，或者服务器和客户端以打乒乓球的方式交流：服务器收到一个请求，然后发回一个响应，然后客户端基于响应再发起其它请求，以此类推<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpc BidiHello(stream HelloRequest) returns (stream HelloResponse)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -568,14 +510,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/redash/" rel="tag"># redash</a>
-          
-            <a href="/tags/python/" rel="tag"># python</a>
-          
-        </div>
-      
 
       
       
@@ -585,8 +519,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/02/hexo2/" rel="next" title="hexo next 主题搭建个人博客">
-                <i class="fa fa-chevron-left"></i> hexo next 主题搭建个人博客
+              <a href="/2019/06/15/time-wait/" rel="next" title="time wait的问题">
+                <i class="fa fa-chevron-left"></i> time wait的问题
               </a>
             
           </div>
@@ -594,10 +528,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/05/14/leetcode23/" rel="prev" title="leetcode23">
-                leetcode23 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -802,7 +732,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redash-实现原理"><span class="nav-number">1.</span> <span class="nav-text">redash 实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redash简介"><span class="nav-number">1.2.</span> <span class="nav-text">Redash简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关技术"><span class="nav-number">1.3.</span> <span class="nav-text">相关技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#angular"><span class="nav-number">1.3.1.</span> <span class="nav-text">angular</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python"><span class="nav-number">1.3.2.</span> <span class="nav-text">python</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flask"><span class="nav-number">1.3.3.</span> <span class="nav-text">flask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sqlalchemy"><span class="nav-number">1.3.4.</span> <span class="nav-text">sqlalchemy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#celery"><span class="nav-number">1.3.5.</span> <span class="nav-text">celery</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#技术架构"><span class="nav-number">1.4.</span> <span class="nav-text">技术架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一次查询过程"><span class="nav-number">1.5.</span> <span class="nav-text">一次查询过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码结构"><span class="nav-number">1.6.</span> <span class="nav-text">代码结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型关系"><span class="nav-number">1.7.</span> <span class="nav-text">模型关系</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RPC"><span class="nav-number">1.</span> <span class="nav-text">RPC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gRPC"><span class="nav-number">2.</span> <span class="nav-text">gRPC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">2.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据格式"><span class="nav-number">2.2.</span> <span class="nav-text">数据格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gRPC通信方法"><span class="nav-number">2.3.</span> <span class="nav-text">gRPC通信方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一元RPC"><span class="nav-number">2.3.1.</span> <span class="nav-text">一元RPC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务端流式RPC"><span class="nav-number">2.3.2.</span> <span class="nav-text">服务端流式RPC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端流式RPC"><span class="nav-number">2.3.3.</span> <span class="nav-text">客户端流式RPC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双向流式RPC"><span class="nav-number">2.3.4.</span> <span class="nav-text">双向流式RPC</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
