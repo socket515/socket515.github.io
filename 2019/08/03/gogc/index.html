@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。 常见GC方法引用计数 引用计数通过在对象上增加自己被引用的次数，被其他对象引用时加1，引用自己的对象被回收时减1，引用数为0的对象即为可以被回收的对象。这种算法在内存比较紧张和实时性比较高的系统中使用的比较广泛，如ios cocoa框架，">
+<meta name="keywords" content="golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="golang GC">
+<meta property="og:url" content="http://yoursite.com/2019/08/03/gogc/index.html">
+<meta property="og:site_name" content="黄少杰">
+<meta property="og:description" content="垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。 常见GC方法引用计数 引用计数通过在对象上增加自己被引用的次数，被其他对象引用时加1，引用自己的对象被回收时减1，引用数为0的对象即为可以被回收的对象。这种算法在内存比较紧张和实时性比较高的系统中使用的比较广泛，如ios cocoa框架，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/08/03/gogc/make_swap.gif">
+<meta property="og:image" content="http://yoursite.com/2019/08/03/gogc/scw.gif">
+<meta property="og:image" content="http://yoursite.com/2019/08/03/gogc/GC-Phases.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/03/gogc/write-barrier_1.png">
+<meta property="og:updated_time" content="2019-08-04T14:58:22.665Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="golang GC">
+<meta name="twitter:description" content="垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。 常见GC方法引用计数 引用计数通过在对象上增加自己被引用的次数，被其他对象引用时加1，引用自己的对象被回收时减1，引用数为0的对象即为可以被回收的对象。这种算法在内存比较紧张和实时性比较高的系统中使用的比较广泛，如ios cocoa框架，">
+<meta name="twitter:image" content="http://yoursite.com/2019/08/03/gogc/make_swap.gif">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/08/03/gogc/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>golang GC | 黄少杰</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">黄少杰</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">个人博客</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/Socketsj" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/03/gogc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="黄少杰">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄少杰">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">golang GC
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-03 19:46:34" itemprop="dateCreated datePublished" datetime="2019-08-03T19:46:34+08:00">2019-08-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-04 22:58:22" itemprop="dateModified" datetime="2019-08-04T22:58:22+08:00">2019-08-04</time>
+              
+            
+          </span>
+          
+            <span class="post-updated">
+              &nbsp; | &nbsp; 更新于
+              <time itemprop="dateUpdated" datetime="2019-08-04T22:58:22+08:00" content="2019-08-04">
+                2019-08-04
+              </time>
+            </span>
+          
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/golang/" itemprop="url" rel="index"><span itemprop="name">golang</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<p> 垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。</p>
+<h1 id="常见GC方法"><a href="#常见GC方法" class="headerlink" title="常见GC方法"></a>常见GC方法</h1><h2 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h2><p> 引用计数通过在对象上增加自己被引用的次数，被其他对象引用时加1，引用自己的对象被回收时减1，引用数为0的对象即为可以被回收的对象。这种算法在内存比较紧张和实时性比较高的系统中使用的比较广泛，如ios cocoa框架，php，python等。</p>
+<p> 优点:</p>
+<ol>
+<li>渐进式。内存管理与用户程序的执行交织在一起，将 GC 的代价分散到整个程序.</li>
+<li>实现简单</li>
+<li><p>内存能及时回收，相比于其他垃圾回收算法，堆被耗尽或者达到某个阈值才会进行垃圾回收。</p>
+<p>缺点:</p>
+</li>
+<li>原始的引用计数不能处理循环引用。大概这是被诟病最多的缺点了（后面有针对这些问题有相对解决办法比如强引用）。</li>
+<li>维护引用计数降低运行效率。内存单元的更新删除等都需要维护相关的内存单元的引用计数，相比于一些追踪式的垃圾回收算法并不需要这些代价。 </li>
+</ol>
+<h2 id="标记清除法"><a href="#标记清除法" class="headerlink" title="标记清除法"></a>标记清除法</h2><p> 标记-清扫算法是第一种自动内存管理，基于追踪的垃圾收集算法。算法思想在 70 年代就提出了，是一种非常古老的算法。内存单元并不会在变成垃圾立刻回收，而是保持不可达状态，直到到达某个阈值或者固定时间长度。这个时候系统会挂起用户程序，也就是 STW，转而执行垃圾回收程序。垃圾回收程序对所有的存活单元进行一次全局遍历确定哪些单元可以回收。算法分两个部分：标记（mark）和清扫（sweep）。<br> 优点：</p>
+<ol>
+<li><p>避免循环引用</p>
+<p>缺点:</p>
+</li>
+<li><p>在标记清除的过程会暂停整个程序运行</p>
+<p>标记清除过程<br><img src="/2019/08/03/gogc/make_swap.gif" alt></p>
+</li>
+</ol>
+<h2 id="复制收集"><a href="#复制收集" class="headerlink" title="复制收集"></a>复制收集</h2><p> 复制收集的方式只需要对对象进行一次扫描。准备一个「新的空间」，从根开始，对对象进行扫，如果存在对这个对象的引用，就把它复制到「新空间中」。一次扫描结束之后，所有存在于「新空间」的对象就是所有的非垃圾对象。</p>
+<p> 优点:</p>
+<ol>
+<li><p>程序员运行并行执行，不干扰程序运行</p>
+<p>缺点:</p>
+</li>
+<li>需要额外开辟内存</li>
+</ol>
+<h2 id="分代收集"><a href="#分代收集" class="headerlink" title="分代收集"></a>分代收集</h2><p> 这种收集方式用了程序的一种特性：大部分对象会从产生开始在很短的时间内变成垃圾，而存在的很长时间的对象往往都有较长的生命周期。根据对象的存活周期不同将内存划分为新生代和老年代，存活周期短的为新生代，存活周期长的为老年代。这样就可以根据每块内存的特点采用最适当的收集算法。新创建的对象存放在称为 新生代（young generation）中（一般来说，新生代的大小会比 老年代小很多）。高频对新生成的对象进行回收，称为「小回收」，低频对所有对象回收，称为「大回收」。每一次「小回收」过后，就把存活下来的对象归为老年代，「小回收」的时候，遇到老年代直接跳过。大多数分代回收算法都采用的「复制收集」方法，因为小回收中垃圾的比例较大。</p>
+<h2 id="三色标记法"><a href="#三色标记法" class="headerlink" title="三色标记法"></a>三色标记法</h2><p> 算是标记清除法的一个变种。将标记和清除分离两个步骤，减少影响程序运行的时间。另外引入写屏障，使得暂停时间减少。</p>
+<p> 算法步骤如下:</p>
+<ol>
+<li>起初所有对象都是白色。</li>
+<li>从根出发扫描所有可达对象，标记为灰色，放入待处理队列。</li>
+<li>从队列取出灰色对象，将其引用对象标记为灰色放入队列，自身标记为黑色。</li>
+<li><p>重复 3，直到灰色对象队列为空。此时白色对象即为垃圾，进行回收。</p>
+<p>如下图<br><img src="/2019/08/03/gogc/scw.gif" alt></p>
+</li>
+</ol>
+<h1 id="Golang-GC"><a href="#Golang-GC" class="headerlink" title="Golang GC"></a>Golang GC</h1><h2 id="gc触发时机"><a href="#gc触发时机" class="headerlink" title="gc触发时机"></a>gc触发时机</h2><p> 触发gc的条件有三种</p>
+<ol>
+<li>内存增长当内存分配过程中，当分配的对象大小 &gt;32kb，或是分配小对象时发现 span 已经满了时，会触发 GC</li>
+<li>强制触发 通过调用 runtime.GC() 函数，这是阻塞式的。启用的时候会堵塞调用者直到垃圾回收完成。</li>
+<li>时间触发 Golang 本身会对运行状态进行监控，如果超过两分钟没有触发 GC 任务，则强制触发。</li>
+</ol>
+<h2 id="gc参数"><a href="#gc参数" class="headerlink" title="gc参数"></a>gc参数</h2><p> 不像java有一堆参数可以调整。golang基本没有提供多少参数可以设置，golang gc设计目的是尽量做到完美，减少开发者对这gc控制。目的是让开发者省心。</p>
+<h2 id="gc发展历程"><a href="#gc发展历程" class="headerlink" title="gc发展历程"></a>gc发展历程</h2><p> golang gc是一直被人诟病。在1.3之前golang gc都不忍直视，golang黑历史。经过多年发展以及比起当初有很大进步，以下为golang gc发展里程碑。</p>
+<ul>
+<li>v1.3 以前版本 STW（Stop The World） 这是最多人诟病的版本，gc方法较为简单。使用标记清除法，在执行gc的时候，会stop the world。无数golang开发团队都踩过这个坑，都避免引用大内存。尽量不要增加gc负担，减少gc运行时间。</li>
+<li>v1.3 Mark STW, Sweep 并行。这个版本分离标记(Mark)和清除(Sweep)的步骤。和以前一样，也是先暂停所有任务执行并启动mark，mark完成后马上就重新启动被暂停的任务了，而是让sweep任务和普通协程任务一样并行的和其他任务一起执行。比起之前有50%的性能提升。</li>
+<li>v1.5 三色标记法. 上文介绍过的gc算法。这种方法的mark操作是可以渐进执行的而不需每次都扫描整个内存空间，可以减少stop the world的时间。</li>
+<li><p>v1.8 混合写屏障（hybrid write barrier）采用一种混合的 write barrier 方式来避免 堆栈重新扫描。混合屏障的优势在于它允许堆栈扫描永久地使堆栈变黑（没有STW并且没有写入堆栈的障碍），这完全消除了堆栈重新扫描的需要，从而消除了对堆栈屏障的需求。重新扫描列表。特别是堆栈障碍在整个运行时引入了显着的复杂性，并且干扰了来自外部工具（如GDB和基于内核的分析器）的堆栈遍历。</p>
+<p>go一路走来gc都在一直进步，虽然对比成熟的gc(如java的jvm)仍然有差距,相信随机技术发展以后会更好的</p>
+</li>
+</ul>
+<h2 id="gc各个阶段"><a href="#gc各个阶段" class="headerlink" title="gc各个阶段"></a>gc各个阶段</h2><p> <img src="/2019/08/03/gogc/GC-Phases.png" alt></p>
+<h3 id="STW"><a href="#STW" class="headerlink" title="STW :"></a>STW :</h3><p> 一些初始化准备工作，包括开启 Write Barrier，结束之前未完成的清除任务，清空对象池等,这个过程会Stop The World Phase。</p>
+<h3 id="Scan-Stacks"><a href="#Scan-Stacks" class="headerlink" title="Scan Stacks :"></a>Scan Stacks :</h3><p> 这个阶段开始所有对象都是白色，这阶段主要是开始找根对象。根对象一般是指栈中引用的对象。</p>
+<ol>
+<li>扫描某个goroutine的栈，暂时停止这个goroutine。</li>
+<li>找到的根对象标记为灰色，并加入到队列。</li>
+<li>该栈标记为黑色。</li>
+</ol>
+<h3 id="Mark-Phase-I"><a href="#Mark-Phase-I" class="headerlink" title="Mark Phase I :"></a>Mark Phase I :</h3><p> 从队列中取出一个灰色对象,并进行以下操作。</p>
+<ol>
+<li>将该对象标记为黑色。</li>
+<li><p>将该对象引用的对象标记为灰色并加入到队列</p>
+<p>在这个时候并不会STW，GC是和程序并行运行的。但是这个时候运行的goroutine的栈会重新变成灰色。</p>
+</li>
+</ol>
+<h3 id="Mark-Phase-II-STW"><a href="#Mark-Phase-II-STW" class="headerlink" title="Mark Phase II - STW"></a>Mark Phase II - STW</h3><p> 这个阶段是重新扫描上个阶段中变成灰色的栈，为了防止有栈重新又变成灰色，这个阶段会STW。如果有大量的活跃goroutine会造成较高的延迟。</p>
+<h3 id="Sweep-Phase"><a href="#Sweep-Phase" class="headerlink" title="Sweep Phase"></a>Sweep Phase</h3><p> 这个阶段回收所有白色的对象。</p>
+<h1 id="写屏障"><a href="#写屏障" class="headerlink" title="写屏障"></a>写屏障</h1><p> 程序对所有涉及修改对象内容的地方进行保护，被称为「写屏障」（Write Barrier）。</p>
+<h2 id="STW-1"><a href="#STW-1" class="headerlink" title="STW"></a>STW</h2><p>  STW 有两个过程:</p>
+<ul>
+<li>第一个是 GC 将要开始的时候，这个时候主要是一些准备工作，比如 enable write barrier。</li>
+<li><p>第二个过程就是上面提到的 re-scan 过程。如果这个时候没有 stw，用户程序反复分配新对象或者修改引用，GC 需要反复 rescan，那 mark 阶段就停不下来了。</p>
+<p>v1.5 的时候 STW 主要就耗在这 rescan 上了，后面 v1.8 实现了一种结合了 Yuasa-style deletion write barrier 和 Dijkstra-style insertion write barrier 的 hybrid write barrier，可以消除 rescan。</p>
+</li>
+</ul>
+<h2 id="写屏障作用"><a href="#写屏障作用" class="headerlink" title="写屏障作用"></a>写屏障作用</h2><p> 在三色标记中，以及标记过的对象。有了新的对象引用，比如已经标记为黑色的对象，引用了一个新的对象。<br> <img src="/2019/08/03/gogc/write-barrier_1.png" alt></p>
+<p> A 是根对象，GC 遍历到 A 时，A 变黑，B 变灰；接着用户程序把 A 到 B 的引用改成了 A 到 C 的引用；然后 GC 接着开始遍历到 B，B 没有引用对象，B 变黑；此时灰色集合已空，标记结束，C 是白色集合所以被清理了。</p>
+<p> 为了防止这种现象的发生，最简单的方式就是STW，直接禁止掉其他用户程序对对象引用关系的干扰，但是STW的过程有明显的资源浪费，对所有的用户程序都有很大影响，如何能在保证对象不丢失的情况下合理的尽可能的提高GC效率，减少STW时间呢？</p>
+<h2 id="屏障技术"><a href="#屏障技术" class="headerlink" title="屏障技术"></a>屏障技术</h2><p> 当回收器满足下面两种情况之一时，即可保证不会出现对象丢失问题。</p>
+<p> 弱三色不变式：所有被黑色对象引用的白色对象都处于灰色保护状态（直接或间接从灰色对象可达）。 强三色不变式：不存在黑色对象到白色对象的指针。</p>
+<p> 强三色不变式很好理解，强制性的不允许黑色对象引用白色对象即可。而弱三色不变式中，黑色对象可以引用白色对象，但是这个白色对象仍然存在其他灰色对象对它的引用，或者可达它的链路上游存在灰色对象。</p>
+<p> 三色抽象除了可以用于描述对象的状态的，还可用来描述赋值器的状态，如果一个赋值器已经被回收器扫描完成，则认为它是黑色的赋值器，如果尚未扫描过或者还需要重新扫描，则认为它是灰色的赋值器。</p>
+<p> 在强三色不变式中，黑色赋值器只存在到黑色对象或灰色对象的指针，因为此时所有黑色对象到白色对象的引用都是被禁止的。 在弱三色不变式中，黑色赋值器允许存在到白色对象的指针，但这个白色对象是被保护的。上述这些可以通过屏障技术来保证。</p>
+<h2 id="插入屏障"><a href="#插入屏障" class="headerlink" title="插入屏障"></a>插入屏障</h2><p> 插入屏障拦截将白色指针插入黑色对象的操作，标记其对应对象为灰色状态，这样就不存在黑色对象引用白色对象的情况了，满足强三色不变式，如上图例中，在插入指针f时将C对象标记为灰色。Go1.5版本使用的Dijkstra写屏障就是这个原理，伪代码如下：</p>
+ <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr):</span><br><span class="line">    shade(ptr)</span><br><span class="line">    *slot = ptr</span><br></pre></td></tr></table></figure>
+<h2 id="删除屏障"><a href="#删除屏障" class="headerlink" title="删除屏障"></a>删除屏障</h2><p> 删除屏障也是拦截写操作的，但是是通过保护灰色对象到白色对象的路径不会断来实现的。如上图例中，在删除指针e时将对象C标记为灰色，这样C下游的所有白色对象，即使会被黑色对象引用，最终也还是会被扫描标记的，满足了弱三色不变式。这种方式的回收精度低，一个对象即使被删除了最后一个指向它的指针也依旧可以活过这一轮，在下一轮GC中被清理掉。Yuasa屏障伪代码如下：</p>
+ <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr):</span><br><span class="line">    <span class="keyword">if</span> (isGery(slot) || isWhite(slot))</span><br><span class="line">        shade(*slot)</span><br><span class="line">    *slot = ptr</span><br></pre></td></tr></table></figure>
+<p> 在这种实现方式中，回收器悲观的认为所有被删除的对象都可能会被黑色对象引用。</p>
+<h2 id="混合写屏障"><a href="#混合写屏障" class="headerlink" title="混合写屏障"></a>混合写屏障</h2><p> 插入屏障和删除屏障各有优缺点，Dijkstra的插入写屏障在标记开始时无需STW，可直接开始，并发进行，但结束时需要STW来重新扫描栈，标记栈上引用的白色对象的存活；Yuasa的删除写屏障则需要在GC开始时STW扫描堆栈来记录初始快照，这个过程会保护开始时刻的所有存活对象，但结束时无需STW。Go1.8版本引入的混合写屏障结合了Yuasa的删除写屏障和Dijkstra的插入写屏障，结合了两者的优点，伪代码如下：</p>
+ <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr):</span><br><span class="line">    shade(*slot)</span><br><span class="line">    <span class="keyword">if</span> current stack is grey:</span><br><span class="line">        shade(ptr)</span><br><span class="line">    *slot = ptr</span><br></pre></td></tr></table></figure>
+<p> 这里使用了两个shade操作，shade(*slot)是删除写屏障的变形，例如，一个堆上的灰色对象B，引用白色对象C，在GC并发运行的过程中，如果栈已扫描置黑，而赋值器将指向C的唯一指针从B中删除，并让栈上其他对象引用它，这时，写屏障会在删除指向白色对象C的指针的时候就将C对象置灰，就可以保护下来了，且它下游的所有对象都处于被保护状态。 如果对象B在栈上，引用堆上的白色对象C，将其引用关系删除，且新增一个黑色对象到对象C的引用，那么就需要通过shade(ptr)来保护了，在指针插入黑色对象时会触发对对象C的置灰操作。如果栈已经被扫描过了，那么栈上引用的对象都是灰色或受灰色保护的白色对象了，所以就没有必要再进行这步操作。</p>
+<p> Golang中的混合写屏障满足的是变形的弱三色不变式，同样允许黑色对象引用白色对象，白色对象处于灰色保护状态，但是只由堆上的灰色对象保护。由于结合了Yuasa的删除写屏障和Dijkstra的插入写屏障的优点，只需要在开始时并发扫描各个goroutine的栈，使其变黑并一直保持，这个过程不需要STW，而标记结束后，因为栈在扫描后始终是黑色的，也无需再进行re-scan操作了，减少了STW的时间。</p>
+<h1 id="关于GC性能"><a href="#关于GC性能" class="headerlink" title="关于GC性能"></a>关于GC性能</h1><h2 id="GC时间"><a href="#GC时间" class="headerlink" title="GC时间"></a>GC时间</h2> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Tgc = Tseq + Tmark + Tsweep(T表示time)</span><br></pre></td></tr></table></figure>
+<p> Tseq表示是停止用户的goroutine和做一些准备活动（通常很小）需要的时间,Tmark是堆标记时间，标记发生在所有用户goroutine停止时，因此可以显著地影响处理的延迟,sweep是堆清除时间，清除通常与正常的程序运行同时发生，所以对延迟来说是不太关键的</p>
+<p> goroutine被停止后, GC将要开始的是时候会做一些准备工作,如写屏障设置等会执行STW,re-scan的时候执行STW,停止用户程序,检验已经扫描的元素是否发生引用的变化.</p>
+<h2 id="GC优化"><a href="#GC优化" class="headerlink" title="GC优化"></a>GC优化</h2><p> 当前GC的算法是固定的, 用户不能够配置垃圾回收的算法,唯一能够更改就是垃圾回收的阀值, 即GOGC, 用来表示触发GC的条件。当前能够提升垃圾回收效率的唯一方式就是减少垃圾的产生,可通过下面的方式</p>
+<ul>
+<li>内存分配合理</li>
+<li>sync.Pool对象池,重复使用对象, 减少内存分配</li>
+<li>append使用, 提前设置cap的数量, 避免无故扩容</li>
+</ul>
+<h3 id="gc时间长的问题"><a href="#gc时间长的问题" class="headerlink" title="gc时间长的问题"></a>gc时间长的问题</h3><p> 尽量避免频繁创建临时堆对象（如&amp;abc{}, new, make等）以减少垃圾收集时的扫描时间，对于需要频繁使用的临时对象考虑直接通过数组缓存进行重用</p>
+<h3 id="goroutine泄露的问题"><a href="#goroutine泄露的问题" class="headerlink" title="goroutine泄露的问题"></a>goroutine泄露的问题</h3><p> 我们的一个服务需要处理很多长连接请求，实现时，对于每个长连接请求各开了一个读取和写入协程，全部采用endless for loop不停地处理收发数据。当连接被远端关闭后，如果不对这两个协程做处理，他们依然会一直运行，并且占用的channel也不会被释放…这里就必须十分注意，在不使用协程后一定要把他依赖的channel close并通过再协程中判断channel是否关闭以保证其退出</p>
+<h3 id="少量使用-连接string"><a href="#少量使用-连接string" class="headerlink" title="少量使用+连接string"></a>少量使用<code>+</code>连接string</h3><p> <code>+</code>来进行string的连接会生成新的对象，降低gc的效率，好的方式是通过append函数来进行。</p>
+<h3 id="string与-byte转化"><a href="#string与-byte转化" class="headerlink" title="string与[]byte转化"></a>string与[]byte转化</h3><p> 在stirng与[]byte之间进行转换，会给gc造成压力 通过gdb，可以先对比下两者的数据结构：<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">type = struct []uint8 &#123; uint8 *array; int len; int cap;&#125;</span><br><span class="line">type = struct string &#123; uint8 *str; int len;&#125;</span><br></pre></td></tr></table></figure></p>
+<p> 两者发生转换的时候，底层数据结结构会进行复制，因此导致gc效率会变低。<br> 解决策略上，一种方式是一直使用[]byte，特别是在数据传输方面，[]byte中也包含着许多string会常用到的有效的操作。<br> 另一种是使用更为底层的操作直接进行转化，避免复制行为的发生。主要是使用unsafe.Pointer直接进行转化</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag"># golang</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/21/grpc/" rel="next" title="grpc">
+                <i class="fa fa-chevron-left"></i> grpc
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="黄少杰">
+            
+              <p class="site-author-name" itemprop="name">黄少杰</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/Socketsj" title="GitHub &rarr; https://github.com/Socketsj" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:282048277@qq.com" title="E-Mail &rarr; mailto:282048277@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#常见GC方法"><span class="nav-number">1.</span> <span class="nav-text">常见GC方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引用计数"><span class="nav-number">1.1.</span> <span class="nav-text">引用计数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标记清除法"><span class="nav-number">1.2.</span> <span class="nav-text">标记清除法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复制收集"><span class="nav-number">1.3.</span> <span class="nav-text">复制收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分代收集"><span class="nav-number">1.4.</span> <span class="nav-text">分代收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三色标记法"><span class="nav-number">1.5.</span> <span class="nav-text">三色标记法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Golang-GC"><span class="nav-number">2.</span> <span class="nav-text">Golang GC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#gc触发时机"><span class="nav-number">2.1.</span> <span class="nav-text">gc触发时机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gc参数"><span class="nav-number">2.2.</span> <span class="nav-text">gc参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gc发展历程"><span class="nav-number">2.3.</span> <span class="nav-text">gc发展历程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gc各个阶段"><span class="nav-number">2.4.</span> <span class="nav-text">gc各个阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#STW"><span class="nav-number">2.4.1.</span> <span class="nav-text">STW :</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Scan-Stacks"><span class="nav-number">2.4.2.</span> <span class="nav-text">Scan Stacks :</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mark-Phase-I"><span class="nav-number">2.4.3.</span> <span class="nav-text">Mark Phase I :</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mark-Phase-II-STW"><span class="nav-number">2.4.4.</span> <span class="nav-text">Mark Phase II - STW</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sweep-Phase"><span class="nav-number">2.4.5.</span> <span class="nav-text">Sweep Phase</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#写屏障"><span class="nav-number">3.</span> <span class="nav-text">写屏障</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#STW-1"><span class="nav-number">3.1.</span> <span class="nav-text">STW</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写屏障作用"><span class="nav-number">3.2.</span> <span class="nav-text">写屏障作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#屏障技术"><span class="nav-number">3.3.</span> <span class="nav-text">屏障技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入屏障"><span class="nav-number">3.4.</span> <span class="nav-text">插入屏障</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除屏障"><span class="nav-number">3.5.</span> <span class="nav-text">删除屏障</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#混合写屏障"><span class="nav-number">3.6.</span> <span class="nav-text">混合写屏障</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于GC性能"><span class="nav-number">4.</span> <span class="nav-text">关于GC性能</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GC时间"><span class="nav-number">4.1.</span> <span class="nav-text">GC时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC优化"><span class="nav-number">4.2.</span> <span class="nav-text">GC优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gc时间长的问题"><span class="nav-number">4.2.1.</span> <span class="nav-text">gc时间长的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#goroutine泄露的问题"><span class="nav-number">4.2.2.</span> <span class="nav-text">goroutine泄露的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#少量使用-连接string"><span class="nav-number">4.2.3.</span> <span class="nav-text">少量使用+连接string</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#string与-byte转化"><span class="nav-number">4.2.4.</span> <span class="nav-text">string与[]byte转化</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">黄少杰</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
