@@ -96,21 +96,21 @@
 
 
 
-  <meta name="description" content="有一天突发奇想，上去服务器去看看服务器的连接状态。发现大部分连接都是establish，有一小部分是time_wait。   正常情况tcp连接成功后自然是establish状态，但是time_wait是怎么来的呢？查询过资料time_wait过多会影响服务器性能？ time_wait怎么来的tcp四次挥手   上面是一个TCP连接四次挥手的过程。从图中得知主动关闭tcp连接的一方会进入tim">
-<meta name="keywords" content="计算机网络,计算机基础">
+  <meta name="description" content="对于软件系统健壮性来说，代码测试的覆盖率是很重要一点。在golang中可以使用go test -c -cover很好构建出统计覆盖率的二进制文件，在项目CI/CD也一直使用该方法获取单元测试覆盖率，在实际使用中发现不少问题:  程序必须关闭才能获取覆盖率，这个问题对于项目中使用还是挺大的，除了单元测试，一些功能测试需要QA配合用手动触发，这样需要关闭程序才能获得覆盖率，不能获得实事覆盖率.">
+<meta name="keywords" content="golang">
 <meta property="og:type" content="article">
-<meta property="og:title" content="time wait的问题">
-<meta property="og:url" content="http://yoursite.com/2019/06/15/time-wait/index.html">
+<meta property="og:title" content="golang运行时覆盖率">
+<meta property="og:url" content="http://yoursite.com/2021/10/23/goc/index.html">
 <meta property="og:site_name" content="黄少杰">
-<meta property="og:description" content="有一天突发奇想，上去服务器去看看服务器的连接状态。发现大部分连接都是establish，有一小部分是time_wait。   正常情况tcp连接成功后自然是establish状态，但是time_wait是怎么来的呢？查询过资料time_wait过多会影响服务器性能？ time_wait怎么来的tcp四次挥手   上面是一个TCP连接四次挥手的过程。从图中得知主动关闭tcp连接的一方会进入tim">
+<meta property="og:description" content="对于软件系统健壮性来说，代码测试的覆盖率是很重要一点。在golang中可以使用go test -c -cover很好构建出统计覆盖率的二进制文件，在项目CI/CD也一直使用该方法获取单元测试覆盖率，在实际使用中发现不少问题:  程序必须关闭才能获取覆盖率，这个问题对于项目中使用还是挺大的，除了单元测试，一些功能测试需要QA配合用手动触发，这样需要关闭程序才能获得覆盖率，不能获得实事覆盖率.">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/06/15/time-wait/fin.jpg">
-<meta property="og:image" content="http://yoursite.com/2019/06/15/time-wait/struct.jpg">
-<meta property="og:updated_time" content="2019-06-21T13:20:37.925Z">
+<meta property="og:image" content="http://yoursite.com/2021/10/23/goc/goc_arch.png">
+<meta property="og:image" content="http://yoursite.com/2021/10/23/goc/cover_report.jpg">
+<meta property="og:updated_time" content="2021-10-24T13:21:24.446Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="time wait的问题">
-<meta name="twitter:description" content="有一天突发奇想，上去服务器去看看服务器的连接状态。发现大部分连接都是establish，有一小部分是time_wait。   正常情况tcp连接成功后自然是establish状态，但是time_wait是怎么来的呢？查询过资料time_wait过多会影响服务器性能？ time_wait怎么来的tcp四次挥手   上面是一个TCP连接四次挥手的过程。从图中得知主动关闭tcp连接的一方会进入tim">
-<meta name="twitter:image" content="http://yoursite.com/2019/06/15/time-wait/fin.jpg">
+<meta name="twitter:title" content="golang运行时覆盖率">
+<meta name="twitter:description" content="对于软件系统健壮性来说，代码测试的覆盖率是很重要一点。在golang中可以使用go test -c -cover很好构建出统计覆盖率的二进制文件，在项目CI/CD也一直使用该方法获取单元测试覆盖率，在实际使用中发现不少问题:  程序必须关闭才能获取覆盖率，这个问题对于项目中使用还是挺大的，除了单元测试，一些功能测试需要QA配合用手动触发，这样需要关闭程序才能获得覆盖率，不能获得实事覆盖率.">
+<meta name="twitter:image" content="http://yoursite.com/2021/10/23/goc/goc_arch.png">
 
 
 
@@ -118,7 +118,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/2019/06/15/time-wait/">
+  <link rel="canonical" href="http://yoursite.com/2021/10/23/goc/">
 
 
 
@@ -128,7 +128,7 @@
   };
 </script>
 
-  <title>time wait的问题 | 黄少杰</title>
+  <title>golang运行时覆盖率 | 黄少杰</title>
   
 
 
@@ -355,7 +355,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/15/time-wait/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/10/23/goc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="黄少杰">
@@ -372,7 +372,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">time wait的问题
+          <h1 class="post-title" itemprop="name headline">golang运行时覆盖率
 
               
             
@@ -398,7 +398,7 @@
                 
               
 
-              <time title="创建时间：2019-06-15 15:58:48" itemprop="dateCreated datePublished" datetime="2019-06-15T15:58:48+08:00">2019-06-15</time>
+              <time title="创建时间：2021-10-23 10:59:35" itemprop="dateCreated datePublished" datetime="2021-10-23T10:59:35+08:00">2021-10-23</time>
             
 
             
@@ -415,15 +415,15 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-21 21:20:37" itemprop="dateModified" datetime="2019-06-21T21:20:37+08:00">2019-06-21</time>
+                <time title="修改时间：2021-10-24 21:21:24" itemprop="dateModified" datetime="2021-10-24T21:21:24+08:00">2021-10-24</time>
               
             
           </span>
           
             <span class="post-updated">
               &nbsp; | &nbsp; 更新于
-              <time itemprop="dateUpdated" datetime="2019-06-21T21:20:37+08:00" content="2019-06-21">
-                2019-06-21
+              <time itemprop="dateUpdated" datetime="2021-10-24T21:21:24+08:00" content="2021-10-24">
+                2021-10-24
               </time>
             </span>
           
@@ -439,7 +439,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/计算机网络/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/golang/" itemprop="url" rel="index"><span itemprop="name">golang</span></a></span>
 
                 
                 
@@ -474,37 +474,55 @@
       
 
       
-        <p><meta name="referrer" content="no-referrer"><br>  有一天突发奇想，上去服务器去看看服务器的连接状态。发现大部分连接都是establish，有一小部分是time_wait。</p>
-<p>  正常情况tcp连接成功后自然是establish状态，但是time_wait是怎么来的呢？查询过资料time_wait过多会影响服务器性能？</p>
-<h1 id="time-wait怎么来的"><a href="#time-wait怎么来的" class="headerlink" title="time_wait怎么来的"></a>time_wait怎么来的</h1><h2 id="tcp四次挥手"><a href="#tcp四次挥手" class="headerlink" title="tcp四次挥手"></a>tcp四次挥手</h2><p> <img src="/2019/06/15/time-wait/fin.jpg" alt></p>
-<p> 上面是一个TCP连接四次挥手的过程。从图中得知主动关闭tcp连接的一方会进入time_wait状态，等待2MSL时间后才进入close。</p>
-<p> 一般情况关闭tcp连接的服务器一段，如果此时有一部分连接开始关闭了(time_wait存在时间够长)，可以解析这时有一部分连接是处于time_wait。</p>
-<h2 id="为什么需要time-wait"><a href="#为什么需要time-wait" class="headerlink" title="为什么需要time_wait"></a>为什么需要time_wait</h2><p> 为什么需要time_wait这一个过渡状态，不可以直接进入close吗？</p>
-<h3 id="1-防止ack包丢失"><a href="#1-防止ack包丢失" class="headerlink" title="(1)防止ack包丢失"></a>(1)防止ack包丢失</h3><p> 在tcp的四次挥手中，最后一个ACK包是主动关闭方发送的，用于响应被动关闭方发送的FIN包。 由于最后一个发送的ACK包有可能会丢失，被动关闭方会在一个超时时间后再发送一个FIN包。所以主动关闭方必须维持这个状态接受重发的FIN包和重发ACK包。</p>
-<h3 id="2-允许老的重复分节在网络中消逝"><a href="#2-允许老的重复分节在网络中消逝" class="headerlink" title="(2)允许老的重复分节在网络中消逝"></a>(2)允许老的重复分节在网络中消逝</h3><p> 在进行四次挥手关闭连接前，发送的数据包有可能因为网络延迟暂时没有发送到目的地。若没有time_wait后面tcp连接关闭了，服务器建立tcp连接有可能会复用以前的端口。在建立新的连接后，之前迷路的包重新到达目的端口。这个时候收到一个不是连接对方的包，会发送一个RCT包强制中断这次连接。为了避免这个尴尬的情况，关闭连接保持time_wait状态，让迷路的包在time_wait下全部收到。</p>
-<h2 id="为什么要等2msl"><a href="#为什么要等2msl" class="headerlink" title="为什么要等2msl"></a>为什么要等2msl</h2><p> MSL是maximum segment lifetime(最大分节生命期），这是一个IP数据包能在互联网上生存的最长时间，超过这个时间将在网络中消失。 time_wait状态保持2MSL，就能保证被动关闭方没有重发FIN包，所有迷路的数据包都在这个时候收到了。</p>
-<h1 id="为什么会出现大量time-wait"><a href="#为什么会出现大量time-wait" class="headerlink" title="为什么会出现大量time_wait"></a>为什么会出现大量time_wait</h1><p> 上面可以知道，time_wait是主动关闭tcp连接的一个过渡状态，可以得出有如下情况会出现大量time_wait</p>
-<ol>
-<li>高并发的短链接。服务器处理大量短链接的时候，大部分的连接都处于结束状态就有大量的time_wait。</li>
-<li><p>服务器的连接数达到瓶颈。服务器达到瓶颈时候会断开一些无用连接这个时候就有大量time_wait。</p>
-<p>大量的time_wait会占用服务器的连接数，且浪费服务器资源去处理time_wit状态，严重影响服务器性能。</p>
+        <p><meta name="referrer" content="no-referrer"><br>   对于软件系统健壮性来说，代码测试的覆盖率是很重要一点。在golang中可以使用<code>go test -c -cover</code>很好构建出统计覆盖率的二进制文件，在项目CI/CD也一直使用该方法获取单元测试覆盖率，在实际使用中发现不少问题:</p>
+<ul>
+<li>程序必须关闭才能获取覆盖率，这个问题对于项目中使用还是挺大的，除了单元测试，一些功能测试需要QA配合用手动触发，这样需要关闭程序才能获得覆盖率，不能获得实事覆盖率.</li>
+<li><p><code>flag</code>问题，使用<code>go test -c -cover</code>需要一个<code>_test</code>文件作为程序入口。而<code>go test</code>命令必然会调用<code>flag.Parse</code>,入口程序的<code>flag</code>可能会失败，而且程序启动命令也必须同步修改，在部署过程中会比较麻烦因为涉及和运维帮忙修改。因为<code>go test</code>本身就会只带一些flag如<code>-test.coverprofile, -test.timeout</code></p>
+<p>基于这几种考量，需要调研出一个能获取代码运行时覆盖率的方法，同时又不改变对现有部署流程。</p>
 </li>
-</ol>
-<h1 id="如何处理大量time-wait"><a href="#如何处理大量time-wait" class="headerlink" title="如何处理大量time_wait"></a>如何处理大量time_wait</h1><p> time_wait的存在十分合理，但是多起来对服务器影响又很大。这个问题好像变的无解了。其实并不是主要两个方向解决，连接的快速回收和复用。</p>
-<p> 下面处理都是/etc/sysctl.conf的参数调整。以下我们先熟悉以下该配置重要参数。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.tcp_timestamps</span><br></pre></td></tr></table></figure>
-<p> RFC 1323 在 TCP Reliability一节里，引入了timestamp的TCP option，两个4字节的时间戳字段，其中第一个4字节字段用来保存发送该数据包的时间，第二个4字节字段用来保存最近一次接收对方发送到数据的时间。有了这两个时间字段，也就有了后续优化的余地。tcp_tw_reuse 和 tcp_tw_recycle就依赖这些时间字段。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.tcp_tw_reuse</span><br></pre></td></tr></table></figure>
-<p> 出现TIME_WAIT状态的连接，一定出现在主动关闭连接的一方。所以，当主动关闭连接的一方，再次向对方发起连接请求的时候（例如，客户端关闭连接，客户端再次连接服务端，此时可以复用了；负载均衡服务器，主动关闭后端的连接，当有新的HTTP请求，负载均衡服务器再次连接后端服务器，此时也可以复用），可以复用TIME_WAIT状态的连接。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.tcp_tw_recycle</span><br></pre></td></tr></table></figure>
-<p> 当开启了这个配置后，内核会快速的回收处于TIME_WAIT状态的socket连接。一个RTO（retransmission timeout，数据包重传的timeout时间）的时间后回收，这个时间根据RTT动态计算出来，但是远小于2MSL。当服务器再次使用这个端口(这里不是重启)，内核里会记录包括该socket连接对应的五元组中的对方IP等在内的一些统计数据，当然也包括从该对方IP所接收到的最近的一次数据包时间。当有新的数据包到达，只要时间晚于内核记录的这个时间，数据包都会被统统的丢掉。</p>
-<p> <img src="/2019/06/15/time-wait/struct.jpg" alt></p>
-<p> 一般服务架构如上图,客户端通过HTTP/1.1连接负载均衡，也就是说，HTTP协议投Connection为keep-alive，所以我们假定，客户端 对 负载均衡服务器 的socket连接，客户端会断开连接，所以，TIME_WAIT出现在客户端Web服务器和MySQL服务器的连接，我们假定，Web服务器上的程序在连接结束的时候，调用close操作关闭socket资源连接，所以，TIME_WAIT出现在 Web 服务器端。</p>
-<p>  所以Web服务器上，肯定可以配置开启的配置：tcp_tw_reuse；如果Web服务器有很多连向DB服务器的连接，可以保证socket连接的复用。那么，负载均衡服务器和Web服务器，谁先关闭连接，则决定了我们怎么配置tcp_tw_reuse/tcp_tw_recycle了</p>
-<h2 id="负载均衡-首先关闭连接"><a href="#负载均衡-首先关闭连接" class="headerlink" title="负载均衡 首先关闭连接"></a>负载均衡 首先关闭连接</h2><p> 在这种情况下，因为负载均衡服务器对Web服务器的连接，TIME_WAIT大都出现在负载均衡服务器上，<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 在负载均衡服务器上的配置</span><br><span class="line">net.ipv4.tcp_tw_reuse = 1 //尽量复用连接</span><br><span class="line">net.ipv4.tcp_tw_recycle = 0</span><br><span class="line"></span><br><span class="line"># 在Web服务器上的配置</span><br><span class="line">net.ipv4.tcp_tw_reuse = 1 //这个配置主要影响的是Web服务器到DB服务器的连接复用</span><br><span class="line">net.ipv4.tcp_tw_recycle： 设置成1和0都没有任何意义</span><br></pre></td></tr></table></figure></p>
-<p> 在负载均衡和它的连接中，它是服务端，但是TIME_WAIT出现在负载均衡服务器上；它和DB的连接，它是客户端，recycle对它并没有什么影响，关键是reuse。</p>
-<h2 id="Web服务器首先关闭来自负载均衡服务器的连接"><a href="#Web服务器首先关闭来自负载均衡服务器的连接" class="headerlink" title="Web服务器首先关闭来自负载均衡服务器的连接"></a>Web服务器首先关闭来自负载均衡服务器的连接</h2><p> 在这种情况下，Web服务器变成TIME_WAIT的重灾区。负载均衡对Web服务器的连接，由Web服务器首先关闭连接，TIME_WAIT出现在Web服务器上。；Web服务器对DB服务器的连接，由Web服务器关闭连接，TIME_WAIT也出现在web服务器上。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 负载均衡服务器上的配置</span><br><span class="line">net.ipv4.tcp_tw_reuse：0 或者 1 都行，都没有实际意义</span><br><span class="line">net.ipv4.tcp_tw_recycle=0 //一定是关闭recycle</span><br><span class="line"></span><br><span class="line"># 在Web服务器上的配置</span><br><span class="line">net.ipv4.tcp_tw_reuse = 1 //这个配置主要影响的是Web服务器到DB服务器的连接复用</span><br><span class="line">net.ipv4.tcp_tw_recycle=1 //由于在负载均衡和Web服务器之间并没有NAT的网络，可以考虑开启recycle，加速由于负载均衡和Web服务器之间的连接造成的大量TIME_WAIT</span><br></pre></td></tr></table></figure>
+</ul>
+<h2 id="覆盖率收集原理"><a href="#覆盖率收集原理" class="headerlink" title="覆盖率收集原理"></a>覆盖率收集原理</h2><p>  golang是通过插桩方式收集覆盖率，在执行<code>go test -c -cover xx</code>的时候，会对源码修改，加入一些统计代码后再编译成二进制文件。这样可以获取到运行过那些逻辑单元，除以总行数可以获得覆盖率。通过<code>go tool cover -mode=count -var=CoverageVariableName xxxx.go</code>可以看到插桩后的代码。</p>
+<p>  插桩前代码<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span> <span class="params">()</span></span>  &#123;</span><br><span class="line"> fmt.Println(<span class="string">"hello wrold"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p> 插桩后代码<br> <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span> <span class="params">()</span></span>  &#123;CoverageVariableName.Count[<span class="number">0</span>]++;</span><br><span class="line"> fmt.Println(<span class="string">"hello wrold"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> CoverageVariableName = <span class="keyword">struct</span> &#123;</span><br><span class="line">    Count     [<span class="number">1</span>]<span class="keyword">uint32</span></span><br><span class="line">    Pos       [<span class="number">3</span> * <span class="number">1</span>]<span class="keyword">uint32</span></span><br><span class="line">    NumStmt   [<span class="number">1</span>]<span class="keyword">uint16</span></span><br><span class="line">&#125; &#123;</span><br><span class="line">    Pos: [<span class="number">3</span> * <span class="number">1</span>]<span class="keyword">uint32</span>&#123;</span><br><span class="line">        <span class="number">21</span>, <span class="number">23</span>, <span class="number">0x2000d</span>, <span class="comment">// [0]</span></span><br><span class="line">    &#125;,</span><br><span class="line">    NumStmt: [<span class="number">1</span>]<span class="keyword">uint16</span>&#123;</span><br><span class="line">        <span class="number">1</span>, <span class="comment">// 0</span></span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p> 可以看到源码多了<code>CoverageVariableName</code>变量以及定义，在原逻辑也多了插桩计算的逻辑，<code>CoverageVariableName</code>其有三个比较关键的属性:</p>
+<ul>
+<li><code>Count</code> uint32 数组，数组中每个元素代表相应基本块 (basic block) 被执行到的次数</li>
+<li><code>Pos</code> 代表的各个基本块在源码文件中的位置，三个为一组。比如这里的21代表该基本块的起始行数，23代表结束行数,0x2000d比较有趣，其前 16 位代表结束列数，后 16 位代表起始列数。通过行和列能唯一确定一个点，而通过起始点和结束点，就能精确表达某基本块在源码文件中的物理范围</li>
+<li><p><code>NumStmt</code> 代表相应基本块范围内有多少语句 (statement)    </p>
+<p><code>CoverageVariableName.Count[0]++</code>统计覆盖率的计算逻辑<br>这样可以很方便得到cov文件中相关数据，类似<code>xxx.go:21.13,23.2 1 1</code></p>
+<p>我们可以知道只要获得插桩后的代码，增加一个http接口通过<code>CoverageVariableName</code>覆盖率计算器，就能获得运行时的cov文件</p>
+</li>
+</ul>
+<h2 id="运行时覆盖率利器-goc"><a href="#运行时覆盖率利器-goc" class="headerlink" title="运行时覆盖率利器-goc"></a>运行时覆盖率利器-goc</h2><p> goc是七牛云开发团队开源的一个运行时覆盖率的工具,大概原理如上所描述，通过插桩代码收集运行时测试覆盖率数据，通过一个http接口输出。具体运作流程如下:</p>
+<ul>
+<li>启动center服务,可以通过<code>goc server</code>启动,center服务充当插桩服务的服务发现和服务注册的注册中心,用户通过center去调用打桩服务获取覆盖率数据。</li>
+<li>通过<code>goc build</code>编译插桩服务，编译过程会加入插桩代码,以及一些http接口用于获取覆盖率数据。编译好的插桩服务可以和原来启动方式一样启动，部署的命令不会改变。</li>
+<li>启动插桩服务,启动时候会向center服务注册自身信息</li>
+<li><p>通过<code>goc profile xxx</code>获取cov文件，在调用<code>go tool cover</code>即可获得覆盖率以及跑过的代码数据。</p>
+<p>goc的服务架构:<br><img src="/2021/10/23/goc/goc_arch.png" alt></p>
+<p>具体安装方式参照goc源码地址:<a href="https://github.com/qiniu/goc" target="_blank" rel="noopener">https://github.com/qiniu/goc</a></p>
+<p>goc编译时候和go build比较相似可以很轻松使用goc编译服务，而且不会影响服务的<code>flag</code>，可以使用原来的启动命令启动.</p>
+</li>
+</ul>
+<h2 id="goc的问题以及解决方法"><a href="#goc的问题以及解决方法" class="headerlink" title="goc的问题以及解决方法"></a>goc的问题以及解决方法</h2><p> goc虽然很好用，但在项目实际应用可能缺少一些功能以及存在一些问题</p>
+<ul>
+<li>获得的覆盖率文件不够直观，原始的cov文件只有原始覆盖率信息，需要通过<code>go tool cover</code>计算覆盖率以及跑过的代码。实际应用中，测试同学关注是代码覆盖率，而开发同学更关注代码运行过的源代码。需要直接获取到一个<code>go tool cover</code>计算后的数据或代码文件.</li>
+<li>插桩服务的名称，插桩服务运行时候会向sever注册自身信息，注册的服务名是二进制文件的名称，而实际部署中多个微服务的二进制文件名是一样的，需要一个服务名选项加以区分。</li>
+<li>go mod vendor模式的编译问题。因为goc编译时候会新建一个临时目录将代码复制被打桩。如果<code>go.mod</code>使用了<code>replace</code>相对路径方式，会因为移动目录导致编译失败,所以goc在编译时会修改<code>go.mod</code>文件将相对路径改成绝对路径。但如果使用<code>mod=vendor</code>的buildflag会因为<code>vendor</code>文件不一致导致编译失败。</li>
+<li><p>center中服务信息失效, 打桩服务启动和推出时候会注册和注销操作，但若服务panic或没正常退出。导致center服务中注册的服务信息是失效的。<code>goc profile</code>会失败,因为某个服务已经失效(可以增加 –skip 参数解决)。</p>
+<p>基于上面多个问题和结合项目应用，在goc源码中修改并处理这些问题</p>
+</li>
+<li><p>获得跑过的代码，这个最为困难,因为<code>go tool cover --htmlout</code>需要服务源代码,而center服务是没有打桩服务的源码，生成html的操作只能由打桩服务实现。编译获取打桩服务的源码,通过<code>embed</code>方式注入到打桩服务程序中,通过<code>golang.org/x/tools/cover</code>包知道生成html文件相关代码</p>
+<p><img src="/2021/10/23/goc/cover_report.jpg" alt></p>
+<p>这样一来就能实时获取运行时覆盖率，以及跑过的代码。这么一看显得有点像”动态语言”感觉，在项目中goc编译后的服务部署在测试环境中，帮助修复了不少bug,因为可以很直观看到跑过哪一部分代码。</p>
+<ul>
+<li>插桩服务名称，这个处理较为简单只需要<code>goc build</code>命令行参数增加<code>service</code>代表插桩服务名称. 相关pr:<a href="https://github.com/qiniu/goc/pull/199" target="_blank" rel="noopener">https://github.com/qiniu/goc/pull/199</a> 但此pr并没有得到 goc merge</li>
+<li>vendor解决,编译时候检查<code>buildflags</code>是否为vendor模式,vendor模式编译不修改<code>go.mod</code>文件。相关pr: <a href="https://github.com/qiniu/goc/pull/237" target="_blank" rel="noopener">https://github.com/qiniu/goc/pull/237</a> 此pr已经得到合并</li>
+<li>center中服务信息失效问题,可以增加一个keepalive机制。打桩服务需要定时向center发送keepalive信息,center服务定时清理过期服务信息。</li>
+</ul>
+<p>基于<code>goc</code>的<code>7da52236182f82e0c8a5279d19071a9661309963</code>版本修改，fork一个goc的仓库（仓库地址: <a href="https://github.com/socket515/goc/tree/feature/cover_report" target="_blank" rel="noopener">https://github.com/socket515/goc/tree/feature/cover_report</a> ）,此外还为goc增加一些新功能，如覆盖率变化曲线,覆盖率变化图表等。更详细欢迎去仓库中看，提出issue。</p>
+</li>
+</ul>
 
       
     </div>
@@ -528,9 +546,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/计算机网络/" rel="tag"># 计算机网络</a>
-          
-            <a href="/tags/计算机基础/" rel="tag"># 计算机基础</a>
+            <a href="/tags/golang/" rel="tag"># golang</a>
           
         </div>
       
@@ -543,8 +559,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/08/goroutine/" rel="next" title="golang协程">
-                <i class="fa fa-chevron-left"></i> golang协程
+              <a href="/2021/08/08/json/" rel="next" title="json序列化和反序列化优化">
+                <i class="fa fa-chevron-left"></i> json序列化和反序列化优化
               </a>
             
           </div>
@@ -552,10 +568,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/21/grpc/" rel="prev" title="grpc">
-                grpc <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -784,7 +796,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#time-wait怎么来的"><span class="nav-number">1.</span> <span class="nav-text">time_wait怎么来的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp四次挥手"><span class="nav-number">1.1.</span> <span class="nav-text">tcp四次挥手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要time-wait"><span class="nav-number">1.2.</span> <span class="nav-text">为什么需要time_wait</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-防止ack包丢失"><span class="nav-number">1.2.1.</span> <span class="nav-text">(1)防止ack包丢失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-允许老的重复分节在网络中消逝"><span class="nav-number">1.2.2.</span> <span class="nav-text">(2)允许老的重复分节在网络中消逝</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要等2msl"><span class="nav-number">1.3.</span> <span class="nav-text">为什么要等2msl</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么会出现大量time-wait"><span class="nav-number">2.</span> <span class="nav-text">为什么会出现大量time_wait</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何处理大量time-wait"><span class="nav-number">3.</span> <span class="nav-text">如何处理大量time_wait</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#负载均衡-首先关闭连接"><span class="nav-number">3.1.</span> <span class="nav-text">负载均衡 首先关闭连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web服务器首先关闭来自负载均衡服务器的连接"><span class="nav-number">3.2.</span> <span class="nav-text">Web服务器首先关闭来自负载均衡服务器的连接</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#覆盖率收集原理"><span class="nav-number">1.</span> <span class="nav-text">覆盖率收集原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行时覆盖率利器-goc"><span class="nav-number">2.</span> <span class="nav-text">运行时覆盖率利器-goc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#goc的问题以及解决方法"><span class="nav-number">3.</span> <span class="nav-text">goc的问题以及解决方法</span></a></li></ol></div>
             
 
           </div>
